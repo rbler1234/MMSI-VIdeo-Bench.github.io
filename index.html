@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>OST-Bench</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      nbody {
+        font-family: 'Segoe UI', sans-serif;
+        background: #f4f6f8;
+        padding: 40px;
+        color: #333;
+      }
+  
+      nh1 {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+  
+      .ncontainer {
+        max-width: 1000px;
+        margin: auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+      }
+  
+      select, button, .turn-button {
+        padding: 10px;
+        margin: 10px 5px;
+        font-size: 16px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+      }
+  
+      .turn-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        margin: 10px 0;
+      }
+  
+      .turn-button {
+        background-color: #eee;
+        cursor: pointer;
+      }
+  
+      .turn-button.active {
+        background-color: #007bff;
+        color: white;
+        font-weight: bold;
+      }
+  
+      .system-prompt {
+        background-color: #f9f9f9;
+        border-left: 5px solid #007bff;
+        padding: 15px;
+        margin-bottom: 20px;
+        font-style: italic;
+        white-space: pre-wrap;
+      }
+  
+      .image-wrapper img {
+        max-width: 100%;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+      }
+  
+      .qa-card {
+        background: #fafafa;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+  
+      .question {
+        font-size: 1.1em;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+  
+      .category {
+        font-size: 0.95em;
+        font-style: italic;
+        color: #666;
+        margin-bottom: 8px;
+      }
+      .table tbody tr:hover {
+        background-color: #f0f8ff; /* hover highlight */
+        transition: background-color 0.3s ease;
+      }
+      
+      .table th {
+        color: #363636;
+        font-weight: 600;
+      }
+      
+      .table tbody tr:nth-child(even) {
+        background-color: #fafafa; /* striped even row */
+      }
+      
+      .card.leaderboard {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+        border-radius: 10px;
+        transition: transform 0.2s;
+      }
+      
+      .card.leaderboard:hover {
+        transform: translateY(-2px);
+      }
+      
+  
+      .options li {
+        list-style: none;
+        padding: 8px 12px;
+        margin-bottom: 6px;
+        background: #e9f0f7;
+        border-radius: 6px;
+      }
+  
+      .answer {
+        display: none;
+        margin-top: 15px;
+        font-weight: bold;
+        color: #1a8917;
+        cursor: pointer;
+      }
+  
+      .nav-buttons {
+        text-align: center;
+        margin-top: 20px;
+      }
+  
+      button {
+        background: #007bff;
+        border: none;
+        color: white;
+        cursor: pointer;
+      }
+  
+      button:hover {
+        background: #0056b3;
+      }
+        .hero.is-small {
+          padding: 3rem 1.5rem;
+      }
+      .content-highlight {
+          max-width: 900px;
+          margin: 2rem auto;
+          padding: 1.5rem;
+          background-color: #f8f9fa;
+          border-radius: 8px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      }
+      .feature-list {
+          text-align: left;
+          display: inline-block;
+          max-width: 800px;
+          margin: 0 auto;
+      }
+      .feature-list li {
+          margin-bottom: 0.8rem;
+          line-height: 1.6;
+      }
+      .feature-list strong {
+          color: #3273dc;
+      }
+      .carousel-item {
+          padding: 2rem 0;
+          transition: all 0.3s ease;
+      }
+      .carousel-item img {
+          max-height: 600px;
+          width: auto;
+          margin: 0 auto;
+          border-radius: 6px;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      }
+      .image-caption {
+          max-width: 800px;
+          margin: 1.5rem auto 0;
+          padding: 1rem;
+          background-color: #f5f5f5;
+          border-radius: 6px;
+          font-size: 1.1rem;
+          line-height: 1.5;
+      }
+      .section-title {
+          margin-bottom: 1.5rem;
+          position: relative;
+          display: inline-block;
+      }
+      .section-title:after {
+          content: "";
+          position: absolute;
+          bottom: -10px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 80px;
+          height: 3px;
+          background: linear-gradient(90deg, #3273dc, #00d1b2);
+          border-radius: 3px;
+      }
+        .leaderboard-card {
+            margin: 2rem auto;
+            max-width: 1000px;
+            box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,0.1);
+        }
+        .model-name { font-weight: 600; }
+        .score-cell {
+            font-family: monospace;
+            text-align: center;
+            width: 150px;
+        }
+        .overall-score {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #3273dc;
+        }
+        .section-header {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .baseline-row { font-style: italic; }
+        .publication-authors {
+          margin-top: 1.2rem;   /* 可调大或小 */
+        }
+      
+        /* 2. 放大、加粗 eql-cntrb */
+        .eql-cntrb {
+          font-size: 3em;    /* 放大 */
+          font-weight: 700;     /* 加粗 */
+          margin-right: 1.2rem; /* 两个标签之间留空 */
+        }
+    </style>
+
+  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="DESCRIPTION META TAG">
+  <meta property="og:title" content="SOCIAL MEDIA TITLE TAG"/>
+  <meta property="og:description" content="SOCIAL MEDIA DESCRIPTION TAG TAG"/>
+  <meta property="og:url" content="URL OF THE WEBSITE"/>
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
+  <meta property="og:image" content="static/image/your_banner_image.png" />
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+
+
+  <meta name="twitter:title" content="TWITTER BANNER TITLE META TAG">
+  <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG">
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
+  <meta name="twitter:image" content="static/images/your_twitter_banner_image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Keywords for your paper to be indexed by-->
+  <meta name="keywords" content="KEYWORDS SHOULD BE PLACED HERE">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <title>OST-Bench:</title>
+  <link rel="icon" type="image/x-icon" href="static/images/ost.ico">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+  rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/index.js"></script>
+</head>
+<body>
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">MMSI-Video-Bench: A Holistic Benchmark for Video-Based Spatial Intelligence</h1>
+            <div class="is-size-5 publication-authors">
+              <!-- Paper authors -->
+              <span class="author-block">
+                <a href="https://github.com/rbler1234" target="_blank">Jingli Lin<sup>1,2*</sup></a>, </span>
+                <span class="author-block">
+                  <a href="https://runsenxu.com/" target="_blank">Runsen Xu<sup>1,3*</sup><sup>†</sup></a>, </span>
+                  <span class="author-block">
+                    <a href="https://openreview.net/profile?id=%7EShaohao_Zhu2" target="_blank">Shaohao Zhu<sup>1,4</sup></a>, 
+                  </span>
+                  <span class="author-block">
+                    <a href="https://sihany077.github.io/" target="_blank">Sihan Yang<sup>1</sup></a>, 
+                  </span>
+                  <span class="author-block">
+                    <a href="https://openreview.net/profile?id=~Peizhou_Cao1" target="_blank">Peizhou Cao<sup>1,5</sup></a>, 
+                  </span> 
+                 
+                  <span class="author-block">
+                    <a href="https://kingteeloki-ran.github.io/" target="_blank">Yunlong Ran<sup>1,4</sup></a>,
+                  </span>
+                  <span class="author-block">
+                    <a href="https://openreview.net/profile?id=~Miao_Hu4" target="_blank">Miao Hu<sup>6</sup></a>,
+                  </span>
+                  <br>
+                  <span class="author-block">
+                    <a href="https://github.com/ZCMax" target="_blank">Chenming Zhu<sup>1,7</sup></a>,
+                  </span>
+                  
+                  <span class="author-block">
+                    <a href="https://kuaikuaixym.github.io/" target="_blank">Yiman Xie<sup>1,4</sup></a>,
+                  </span>
+                  <span class="author-block">
+                    <a href="https://openreview.net/profile?id=%7EYilin_Long2" target="_blank">Yilin Long<sup>1,8</sup></a>,
+                  </span>
+                  <span class="author-block">
+                    <a href="https://gordonhu608.github.io/" target="_blank">Wenbo Hu<sup>1,9</sup></a>,
+                  </span>
+                  
+                  <span class="author-block">
+                    <a href="http://dahua.site/" target="_blank">Dahua Lin<sup>1,3</sup></a>,
+                  </span>
+                  <span class="author-block">
+                    <a href="https://tai-wang.github.io/" target="_blank">Tai Wang<sup>1✉</sup></a>,
+                  </span>
+                  <span class="author-block">
+                    <a href="https://oceanpang.github.io/" target="_blank">Jiangmiao Pang<sup>1✉</sup></a>
+                  </span>
+                  <br>
+
+
+                  </div>
+
+
+
+                  <div class="is-size-5 publication-authors">
+  
+                    <span class="institution"><sup>1</sup>Shanghai AI Laboratory</span>
+                    <span class="institution"><sup>2</sup>Shanghai Jiaotong University</span>
+                    <span class="institution"><sup>3</sup>The Chinese University of Hong Kong</span>
+                    <br>
+                    <span class="institution"><sup>4</sup>Zhejiang University</span>
+                    <span class="institution"><sup>5</sup>Beihang University</span>
+                    <span class="institution"><sup>6</sup>Xi'an Jiaotong University</span>
+                    <span class="institution"><sup>7</sup>University of Hong Kong</span>
+                    <br>
+                    <span class="institution"><sup>8</sup>Fudan University</span>
+                    <span class="institution"><sup>9</sup>University of California, Los Angeles</span>
+                    <br>
+                    
+                  </div>
+
+                  <div class="is-size-5 publication-authors">
+  
+                    <span class="eql-cntrb"><sup>*</sup>Equal Contribution</span>
+                    <span class="eql-cntrb"><sup>†</sup>Project Lead</span>
+                    
+                  </div>
+
+                  <div class="column has-text-centered">
+                    <div class="publication-links">
+                         <!-- Arxiv PDF link -->
+                      <span class="link-block">
+                        <a href="https://arxiv.org/pdf/2507.07984" target="_blank"
+                        class="external-link button is-normal is-rounded is-dark">
+                        <span class="icon">
+                          <i class="fas fa-file-pdf"></i>
+                        </span>
+                        <span>Paper</span>
+                      </a>
+                    </span>
+
+
+                  <!-- Github link -->
+                  <span class="link-block">
+                    <a href="https://github.com/OpenRobotLab/OST-Bench" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+
+                <!-- data_1 link -->
+                <span class="link-block">
+                  <a href="https://huggingface.co/datasets/rbler/OST-Bench/tree/main" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-database"></i>
+                  </span>
+                  <span>Data</span>
+                </a>
+              </span>
+
+                <!-- ArXiv abstract Link -->
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/2507.07984" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Teaser video-->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video poster="" id="tree" autoplay controls muted loop height="100%">
+        <!-- Your video here -->
+        <source src="static/videos/demo.mp4"
+        type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered">
+        MMSI-Video-Bench covers spatial layout reasoning, motion understanding, decision-making, and cross-video reasoning, providing a holistic evaluation of video-based spatial intelligence.
+      </h2>
+    </div>
+  </div>
+</section>
+<!-- End teaser video -->
+
+<!-- Paper abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3 section-title">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            We introduce MMSI-Video-Bench, a fully human-annotated benchmark for video-based spatial intelligence in MLLMs. It operationalizes a four-level framework, Perception, Planning, Prediction, and Cross-Video Reasoning, through 1,106 questions grounded in 1,278 clips from 25 datasets and in-house videos. Each item is carefully designed and reviewed by 3DV experts with explanatory rationales to ensure precise, unambiguous grounding. We evaluate 25 strong open-source and proprietary MLLMs, revealing a striking human--AI gap: many models perform near chance, and the best reasoning model lags humans by nearly 60%. Fine-grained error analysis exposes systematic failures in geometric reasoning, motion grounding, long-horizon prediction, and cross-video correspondence. We also show that typical frame-sampling strategies transfer poorly to our benchmark due to its reasoning-intensive nature. We expect our benchmark to establish a solid testbed for advancing video-based spatial intelligence.          </p>
+</div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper abstract -->
+
+
+<!-- Image carousel -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container">
+      <!-- 标题部分 -->
+      <div class="columns is-centered has-text-centered" style="margin-bottom: -5rem;">
+        <div class="column">
+          <h2 class="title is-3 section-title" style="margin-bottom: -5rem;">Overview</h2>
+          
+          <!-- 新增的两行介绍文本（字体更大、带圆点、关键字加粗） -->
+          <div class="content-highlight">
+            <ul class="feature-list">
+              <li>
+                <strong>1. High quality.</strong> All data are manually annotated by 11 domain experts in 3D vision, following a rigorous review and acceptance process to ensure annotation accuracy and reliability.
+              </li>
+              <li>
+                <strong>2. Challenging.</strong> We evaluate 25 strong open-source and proprietary MLLMs, revealing a striking human–AI gap, even the best reasoning model trails human performance by nearly 60%.
+              </li>
+              <li>
+                <strong>3. Diverse Video Sources.</strong> MMSI-Video-Bench includes videos from 25 public datasets and 1 in-house collection, spanning tabletop recordings, indoor and multi-floor environments, outdoor scenes, sports, and movie footage.
+              </li>
+              <li>
+                <strong>4. Comprehensive and Hostile Task Coverage.</strong>: The benchmark covers spatial layout reasoning, motion understanding, decision-making, and cross-video reasoning, providing a more holistic evaluation of video-based spatial intelligence.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 轮播部分（放大图片） -->
+      <div class="columns is-centered" style="margin-top: 0;">
+        <div class="column is-10">
+          <div id="results-carousel" class="carousel results-carousel">
+            <div class="item has-text-centered">
+              <img src="static/images/benchmark_samples.png" alt="Benchmark Samples" 
+                   style="max-height: 1100px; width: auto; "/>
+              <h2 class="subtitle">llustrative examples of different subtypes in MMSI-Video-Bench. Rel., Inst., and Cam. stand for Relationship, Instance, and Camera.</h2>
+            </div>
+            <div class="item has-text-centered">
+              <img src="static/images/static.png" alt="Static Analysis" 
+                   style="max-height: 1100px; width: auto; "/>
+              <h2 class="subtitle">(Top) The data collection, annotation, and verification pipeline of MMSI-Video-Bench.
+                (Bottom) Dataset statistics of MMSI-Video-Bench, including the proportion of each subtype, the distribution of video durations, and the word cloud.</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End image carousel -->
+
+
+
+
+
+
+
+  <section class="section">
+    <div class="container">
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <h2 class="title is-3 section-title">Leaderboard</h2>
+  
+          <!-- Dropdown -->
+          <div class="field mt-2" style="justify-content:center; display:flex;">
+            <div class="control">
+              <div class="select is-rounded" style="min-width:40px; max-width:390px;">
+                <select id="leaderboardSelect" onchange="switchLeaderboard()">
+                  <option value="Uniform-50",select>Uniform-50</option>
+                  <option value="Sufficient-Coverage">Sufficient-Coverage</option>
+                  
+                  <option value="robot">Robot Sub-bench</option>
+                  <option value="indoor">Indoor Scene Perception Sub-bench</option>
+                  <option value="grounding">Grounding Sub-bench</option>
+                </select>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Leaderboards -->
+          <div class="leaderboard-card mt-4">
+  
+            <div class="card leaderboard" id="Uniform-50" >
+              <div class="card-content p-0">
+                <div class="table-container">
+                  <table class="table is-fullwidth is-hoverable is-striped">
+                    <thead>
+                      <tr style="background-color:#f5f5f5;">
+                        <th>Model</th>
+                        <th>Avg.(%)</th>
+                        <th>Type</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>human</td>
+                        <td>96.40</td>
+                        <td><i class="fas fa-user"></i> Baseline</td>
+                      </tr>
+                      <tr>
+                        <td>🥇 gemini-3-pro</td>
+                        <td>37.97</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>🥈 o3</td>
+                        <td>36.98</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>🥉 gpt-5</td>
+                        <td>36.80</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>gemini-2.5-flash</td>
+                        <td>35.44</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>gemini-2.5-flash (thinking)</td>
+                        <td>35.17</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>seed-1-6-vision</td>
+                        <td>34.87</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>claude-haiku-4-5</td>
+                        <td>34.27</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>o4-mini</td>
+                        <td>34.18</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL2.5-72B</td>
+                        <td>32.73</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL3-78B</td>
+                        <td>32.55</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>doubao-1-5-thinking</td>
+                        <td>31.65</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>gpt-4o</td>
+                        <td>31.56</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL2.5-78B</td>
+                        <td>31.37</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL2.5-38B</td>
+                        <td>31.01</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL3-30B (Thinking)</td>
+                        <td>30.83</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>LLaVA-Video-72B</td>
+                        <td>30.38</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL3-8B</td>
+                        <td>30.38</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL2.5-VL-7B-Instruct</td>
+                        <td>29.66</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL2.5-8B</td>
+                        <td>29.11</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL3-38B</td>
+                        <td>28.84</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL3-30B</td>
+                        <td>28.75</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL2.5-32B</td>
+                        <td>28.57</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>LLaVA-Video-7B</td>
+                        <td>28.48</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL3-8B</td>
+                        <td>27.58</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVideo2.5-8B</td>
+                        <td>27.40</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>Random Guessing</td>
+                        <td>24.10</td>
+                        <td><i class="fas fa-random"></i> Baseline</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="card leaderboard" id="Sufficient-Coverage" style="display:none;">
+              <div class="card-content p-1">
+                <div class="table-container">
+                  <table class="table is-fullwidth is-hoverable is-striped">
+                    <thead>
+                      <tr style="background-color:#f5f5f5;">
+                        <th>Model</th>
+                        <th>Avg.(%)</th>
+                        <th>Type</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>human</td>
+                        <td>96.40</td>
+                        <td><i class="fas fa-user"></i> Baseline</td>
+                      </tr>
+                      <tr>
+                        <td>🥇 o3</td>
+                        <td>37.34</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>🥈 gemini-2.5-flash (thinking)</td>
+                        <td>36.71</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>🥉 gemini-2.5-flash</td>
+                        <td>36.62</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>o4-mini</td>
+                        <td>35.08</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL2.5-32B</td>
+                        <td>32.37</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL2.5-72B</td>
+                        <td>31.83</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL3-8B</td>
+                        <td>29.57</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL3-30B</td>
+                        <td>29.11</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL3-8B</td>
+                        <td>29.09</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL2.5-7B</td>
+                        <td>28.84</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL2.5-8B</td>
+                        <td>28.66</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>gpt-4o</td>
+                        <td>28.12</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL3-30B (thinking)</td>
+                        <td>28.03</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVideo2.5-8B</td>
+                        <td>26.85</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>Random Guessing</td>
+                        <td>24.10</td>
+                        <td><i class="fas fa-random"></i> Baseline</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="card leaderboard" id="robot" style="display:none;">
+              <div class="card-content p-2">
+                <div class="table-container">
+                  <table class="table is-fullwidth is-hoverable is-striped">
+                    <thead>
+                      <tr style="background-color:#f5f5f5;">
+                        <th>Model</th>
+                        <th>Avg.(%)</th>
+                        <th>Type</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>🥇 gemini-3-pro</td>
+                        <td>40.20</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>🥈 gemini-2.5-flash (thinking)</td>
+                        <td>39.71</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>🥉 seed-1-6-vision</td>
+                        <td>39.34</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>o3</td>
+                        <td>39.22</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL2.5-72B</td>
+                        <td>37.75</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL3-8B</td>
+                        <td>37.75</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>gpt-5</td>
+                        <td>37.75</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL2.5-38B</td>
+                        <td>36.27</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>doubao-1-5-thinking</td>
+                        <td>36.07</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>gemini-2.5-flash</td>
+                        <td>35.78</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>o4-mini</td>
+                        <td>35.29</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL2.5-7B</td>
+                        <td>34.80</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL2.5-78B</td>
+                        <td>34.80</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>claude-haiku-4-5</td>
+                        <td>34.80</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL3-78B</td>
+                        <td>34.31</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>LLaVA-Video-72B</td>
+                        <td>34.31</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL3-30B</td>
+                        <td>32.84</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL2.5-32B</td>
+                        <td>32.84</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL3-8B</td>
+                        <td>32.12</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVideo2.5-8B</td>
+                        <td>29.90</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>gpt-4o</td>
+                        <td>29.90</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL2.5-8B</td>
+                        <td>28.43</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL3-38B</td>
+                        <td>27.94</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL3-30B (Thinking)</td>
+                        <td>27.94</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>LLaVA-Video-7B</td>
+                        <td>24.51</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  
+                </div>
+              </div>
+            </div>
+            <div class="card leaderboard" id="indoor" style="display:none;">
+              <div class="card-content p-3">
+                <div class="table-container">
+                  <table class="table is-fullwidth is-hoverable is-striped">
+                    <thead>
+                      <tr style="background-color:#f5f5f5;">
+                        <th>Model</th>
+                        <th>Avg.(%)</th>
+                        <th>Type</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>🥇 gpt-5</td>
+                        <td>41.68</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>🥈 o3</td>
+                        <td>40.73</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>🥉 gemini-2.5-flash</td>
+                        <td>39.39</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>gemini-3-pro</td>
+                        <td>39.39</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>gemini-2.5-flash (thinking)</td>
+                        <td>37.86</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>o4-mini</td>
+                        <td>37.48</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>seed-1-6-vision</td>
+                        <td>34.20</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>claude-haiku-4-5</td>
+                        <td>33.46</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>doubao-1-5-thinking</td>
+                        <td>33.04</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL3-78B</td>
+                        <td>32.50</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL3-30B (Thinking)</td>
+                        <td>32.31</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>gpt-4o</td>
+                        <td>31.74</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL2.5-72B</td>
+                        <td>30.78</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL2.5-78B</td>
+                        <td>30.40</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL3-30B</td>
+                        <td>30.02</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL2.5-32B</td>
+                        <td>29.64</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL2.5-8B</td>
+                        <td>29.45</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL3-38B</td>
+                        <td>29.06</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL3-8B</td>
+                        <td>28.68</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL2.5-38B</td>
+                        <td>28.30</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>LLaVA-Video-72B</td>
+                        <td>28.11</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL3-8B</td>
+                        <td>27.72</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>LLaVA-Video-7B</td>
+                        <td>27.53</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL2.5-7B</td>
+                        <td>27.15</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVideo2.5-8B</td>
+                        <td>26.77</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  
+                  
+                </div>
+              </div>
+            </div>  
+            <div class="card leaderboard" id="grounding" style="display:none;">
+              <div class="card-content p-4">
+                <div class="table-container">
+                  <table class="table is-fullwidth is-hoverable is-striped">
+                    <thead>
+                      <tr style="background-color:#f5f5f5;">
+                        <th>Model</th>
+                        <th>Avg.(%)</th>
+                        <th>Type</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>🥇 gemini-2.5-flash</td>
+                        <td>38.81</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>🥈 gemini-2.5-flash (thinking)</td>
+                        <td>38.21</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>🥉 o3</td>
+                        <td>37.61</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>doubao-1-5-thinking</td>
+                        <td>37.05</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL3-78B</td>
+                        <td>35.52</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>gpt-5</td>
+                        <td>35.22</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>gemini-3-pro</td>
+                        <td>35.22</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>o4-mini</td>
+                        <td>34.33</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL2.5-72B</td>
+                        <td>34.33</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>seed-1-6-vision</td>
+                        <td>33.04</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>claude-haiku-4-5</td>
+                        <td>32.84</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL2.5-38B</td>
+                        <td>31.94</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL3-8B</td>
+                        <td>31.94</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>gpt-4o</td>
+                        <td>31.94</td>
+                        <td><i class="fas fa-lock"></i> Proprietary</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL3-30B (Thinking)</td>
+                        <td>31.64</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL2.5-32B</td>
+                        <td>31.04</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>LLaVA-Video-72B</td>
+                        <td>31.04</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL3-38B</td>
+                        <td>30.45</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL2.5-8B</td>
+                        <td>30.15</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVL2.5-78B</td>
+                        <td>29.85</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL3-30B</td>
+                        <td>29.25</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL2.5-7B</td>
+                        <td>28.66</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>QwenVL3-8B</td>
+                        <td>28.66</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>InternVideo2.5-8B</td>
+                        <td>27.76</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                      <tr>
+                        <td>LLaVA-Video-7B</td>
+                        <td>27.16</td>
+                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  
+                  
+                </div>
+              </div>
+            </div> 
+            
+            <!-- 其他 sub-bench 略，可同样添加 class="is-striped is-hoverable" -->
+  
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+  
+  <script>
+    function switchLeaderboard() {
+      const selected = document.getElementById('leaderboardSelect').value;
+      const leaderboards = document.querySelectorAll('.leaderboard');
+      leaderboards.forEach(lb => {
+        lb.style.display = (lb.id === selected) ? 'block' : 'none';
+      });
+    }
+    </script>
+  
+
+
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container">
+      <!-- 标题部分 -->
+      <div class="columns is-centered has-text-centered" style="margin-bottom: -5rem;">
+        <div class="column">
+          <h2 class="title is-3 section-title">Analysis</h2>
+          
+          <!-- 新增的两行介绍文本（字体更大、带圆点、关键字加粗） -->
+          <div class="content-highlight">
+           
+          </div>
+        </div>
+      </div>
+
+      <!-- 轮播部分（放大图片） -->
+      <div class="columns is-centered" style="margin-top: 0;">
+        <div class="column is-10">
+          <div id="results-carousel" class="carousel results-carousel">
+            <div class="item has-text-centered">
+              <img src="static/images/analysis1.png" alt="Benchmark Samples" 
+                   style="max-height: 900px; width: auto; "/>
+              <h2 class="subtitle">lustration of five representative error types identified in MMSI-Video-Bench, along with examples of model responses and
+                corresponding error analyses.</h2>
+            </div>
+            <div class="item has-text-centered">
+              <img src="static/images/analysis2.png" alt="Benchmark Samples" 
+                   style="max-height: 900px; width: auto; "/>
+              <h2 class="subtitle">Distribution of the five error types. (Left) Error distribu-
+                tion across different question categories. (Right) Overall propor-
+                tion of each error type.</h2>
+            </div>
+            <div class="item has-text-centered">
+              <img src="static/images/analysis3.png" alt="Benchmark Samples" 
+                   style="max-height: 900px; width: auto; "/>
+              <h2 class="subtitle">Model performance under different frame sampling
+                methods. Dashed lines indicate contiguous sampling, while solid
+                lines indicate uniform sampling.</h2>
+            </div>
+            <div class="item has-text-centered">
+              <img src="static/images/analysis4.png" alt="Benchmark Samples" 
+                   style="max-height: 900px; width: auto; "/>
+              <h2 class="subtitle">Effect of different methods(Equipped with 3D Spatial Cues / Chain-of-Thought Prompting) on model performance.</h2>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!--BibTex citation -->
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@article{lin2025ostbench,
+        title={OST-Bench: Evaluating the Capabilities of MLLMs in Online Spatio-temporal Scene Understanding},
+        author={JingLi Lin and Chenming Zhu and Runsen Xu and Xiaohan Mao and Xihui Liu and Tai Wang and Jiangmiao Pang},
+        journal={arXiv preprint arXiv:2507.07984},
+        year={2025}
+      }</code></pre>
+    </div>
+</section>
+<!--End BibTex citation -->
+
+
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Statcounter tracking code -->
+  
+<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+
+    <!-- End of Statcounter Code -->
+
+  </body>
+  </html>
