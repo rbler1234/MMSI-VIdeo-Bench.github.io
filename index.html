@@ -1,1339 +1,1116 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MMSI-Video-Bench</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-      nbody {
-        font-family: 'Segoe UI', sans-serif;
-        background: #f4f6f8;
-        padding: 40px;
-        color: #333;
-      }
-  
-      nh1 {
-        text-align: center;
-        margin-bottom: 30px;
-      }
-  
-      .ncontainer {
-        max-width: 1000px;
-        margin: auto;
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        padding: 30px;
-      }
-  
-      select, button, .turn-button {
-        padding: 10px;
-        margin: 10px 5px;
-        font-size: 16px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-      }
-  
-      .turn-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        justify-content: center;
-        margin: 10px 0;
-      }
-  
-      .turn-button {
-        background-color: #eee;
-        cursor: pointer;
-      }
-  
-      .turn-button.active {
-        background-color: #007bff;
-        color: white;
-        font-weight: bold;
-      }
-  
-      .system-prompt {
-        background-color: #f9f9f9;
-        border-left: 5px solid #007bff;
-        padding: 15px;
-        margin-bottom: 20px;
-        font-style: italic;
-        white-space: pre-wrap;
-      }
-  
-      .image-wrapper img {
-        max-width: 100%;
-        border-radius: 10px;
-        border: 1px solid #ddd;
-      }
-  
-      .qa-card {
-        background: #fafafa;
-        border: 1px solid #eee;
-        border-radius: 10px;
-        padding: 20px;
-        margin-top: 20px;
-      }
-  
-      .question {
-        font-size: 1.1em;
-        font-weight: 600;
-        margin-bottom: 10px;
-      }
-  
-      .category {
-        font-size: 0.95em;
-        font-style: italic;
-        color: #666;
-        margin-bottom: 8px;
-      }
-      .table tbody tr:hover {
-        background-color: #f0f8ff; /* hover highlight */
-        transition: background-color 0.3s ease;
-      }
-      
-      .table th {
-        color: #363636;
-        font-weight: 600;
-      }
-      
-      .table tbody tr:nth-child(even) {
-        background-color: #fafafa; /* striped even row */
-      }
-      
-      .card.leaderboard {
-        box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-        border-radius: 10px;
-        transition: transform 0.2s;
-      }
-      
-      .card.leaderboard:hover {
-        transform: translateY(-2px);
-      }
-      
-  
-      .options li {
-        list-style: none;
-        padding: 8px 12px;
-        margin-bottom: 6px;
-        background: #e9f0f7;
-        border-radius: 6px;
-      }
-  
-      .answer {
-        display: none;
-        margin-top: 15px;
-        font-weight: bold;
-        color: #1a8917;
-        cursor: pointer;
-      }
-  
-      .nav-buttons {
-        text-align: center;
-        margin-top: 20px;
-      }
-  
-      button {
-        background: #007bff;
-        border: none;
-        color: white;
-        cursor: pointer;
-      }
-  
-      button:hover {
-        background: #0056b3;
-      }
-        .hero.is-small {
-          padding: 3rem 1.5rem;
-      }
-      .content-highlight {
-          max-width: 900px;
-          margin: 2rem auto;
-          padding: 1.5rem;
-          background-color: #f8f9fa;
-          border-radius: 8px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      }
-      .feature-list {
-          text-align: left;
-          display: inline-block;
-          max-width: 800px;
-          margin: 0 auto;
-      }
-      .feature-list li {
-          margin-bottom: 0.8rem;
-          line-height: 1.6;
-      }
-      .feature-list strong {
-          color: #3273dc;
-      }
-      .carousel-item {
-          padding: 2rem 0;
-          transition: all 0.3s ease;
-      }
-      .carousel-item img {
-          max-height: 600px;
-          width: auto;
-          margin: 0 auto;
-          border-radius: 6px;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      }
-      .image-caption {
-          max-width: 800px;
-          margin: 1.5rem auto 0;
-          padding: 1rem;
-          background-color: #f5f5f5;
-          border-radius: 6px;
-          font-size: 1.1rem;
-          line-height: 1.5;
-      }
-      .section-title {
-          margin-bottom: 1.5rem;
-          position: relative;
-          display: inline-block;
-      }
-      .section-title:after {
-          content: "";
-          position: absolute;
-          bottom: -10px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 80px;
-          height: 3px;
-          background: linear-gradient(90deg, #3273dc, #00d1b2);
-          border-radius: 3px;
-      }
-        .leaderboard-card {
-            margin: 2rem auto;
-            max-width: 1000px;
-            box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,0.1);
-        }
-        .model-name { font-weight: 600; }
-        .score-cell {
-            font-family: monospace;
-            text-align: center;
-            width: 150px;
-        }
-        .overall-score {
-            font-weight: bold;
-            font-size: 1.1em;
-            color: #3273dc;
-        }
-        .section-header {
-            background-color: #f8f9fa;
-            font-weight: bold;
-        }
-        .baseline-row { font-style: italic; }
-        .publication-authors {
-          margin-top: 1.2rem;   /* 可调大或小 */
-        }
-      
-        /* 2. 放大、加粗 eql-cntrb */
-        .eql-cntrb {
-          font-size: 3em;    /* 放大 */
-          font-weight: 700;     /* 加粗 */
-          margin-right: 1.2rem; /* 两个标签之间留空 */
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MMSI-Video-Bench</title>
 
-  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
-  <!-- Replace the content tag with appropriate information -->
-  <meta name="description" content="DESCRIPTION META TAG">
-  <meta property="og:title" content="SOCIAL MEDIA TITLE TAG"/>
-  <meta property="og:description" content="SOCIAL MEDIA DESCRIPTION TAG TAG"/>
-  <meta property="og:url" content="URL OF THE WEBSITE"/>
-  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
-  <meta property="og:image" content="static/image/your_banner_image.png" />
-  <meta property="og:image:width" content="1200"/>
-  <meta property="og:image:height" content="630"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
-
-  <meta name="twitter:title" content="TWITTER BANNER TITLE META TAG">
-  <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG">
-  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
-  <meta name="twitter:image" content="static/images/your_twitter_banner_image.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <!-- Keywords for your paper to be indexed by-->
-  <meta name="keywords" content="KEYWORDS SHOULD BE PLACED HERE">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-  <title>MMSI-VIdeo-Bench:</title>
-  <link rel="icon" type="image/x-icon" href="static/images/ost.ico">
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-  rel="stylesheet">
-
-  <link rel="stylesheet" href="static/css/bulma.min.css">
-  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
-  <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="static/css/index.css">
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
-  <script defer src="static/js/fontawesome.all.min.js"></script>
-  <script src="static/js/bulma-carousel.min.js"></script>
-  <script src="static/js/bulma-slider.min.js"></script>
-  <script src="static/js/index.js"></script>
+<style>
+    /* ================= Basic Reset ================= */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Roboto', sans-serif; background: #1f1f2e; color: #e0e0e0; line-height:1.6; }
+    a { color: #d3e2fb; text-decoration: none; transition: color 0.2s; }
+    a:hover { color: #5a5aff; }
+  
+    /* ================= 背景色 ================= */
+    .hero { background: linear-gradient(135deg, #4657c8, #5ca9e1); } /* Title 深色背景 */
+.bg-light { background:#f4fdff; color:#1f1f2e; } /* 白色区块 */
+.bg-dark {
+  /* 更浅的蓝-紫渐变，跨度大 */
+  background: linear-gradient(135deg, #d9d7f5, #cbebfe);
+  color: #1f1f2e; /* 内容文字深色保持清晰 */
+}
+  
+    /* ================= 内部容器 ================= */
+    .inner-container { max-width:1200px; margin:0 auto; padding:2rem; text-align:center; display:flex; flex-direction:column; align-items:center; }
+  
+    /* ================= Hero / Title ================= */
+    .hero-title { font-size: 3rem; font-weight: 700; color: #bfd4f6; margin-bottom: 1rem; }
+    .hero-subtitle { font-size: 1.25rem; color: #d7d7e2; }
+    .authors { margin-top: 1rem; font-size: 1.2rem; color: #b0b3e9; }
+    .authors a { font-weight: 500; }
+    .author-block { margin-right: 0.8rem; display: inline-block; }
+    .eql-cntrb { font-weight: 700; margin-right: 1rem; }
+  
+    /* ================= Abstract ================= */
+    .abstract h2 { color: #676cf5; margin-bottom: 1rem; font-size: 2.0rem;}
+    .abstract p { font-size: 1rem; }
+  
+    /* ================= Demo Video ================= */
+    .demo-video video { width: 110%; max-width: 900px; border-radius: 12px; margin-bottom:1rem; }
+    .demo-video h2 { margin-top: 1rem; color: #4e7bc4; font-weight: 500; }
+  
+    /* ================= Leaderboard ================= */
+    .leaderboard select { padding: 0.4rem 0.8rem; font-size: 1rem; border-radius: 8px; border: none; background: #333366; color: #fff; margin-bottom: 1rem; }
+    .leaderboard table { width: 80%; border-collapse: collapse; background: rgba(0,0,0,0.05); border-radius: 12px; overflow: hidden; text-align:center; margin:0 auto; }
+    .leaderboard th, .leaderboard td { padding: 0.8rem 1rem; text-align: center; }
+    .leaderboard th { background: #3a3a6c; color: #fff; font-weight: 600; }
+    .leaderboard tr:nth-child(even) { background: rgba(0,0,0,0.02); }
+    .leaderboard tr:hover { background: rgba(0,0,0,0.1); }
+  
+    /* ================= Carousel ================= */
+    .carousel { position: relative; overflow: hidden; border-radius: 12px; width:100%; max-width:900px; }
+    .carousel-track { display: flex; transition: transform 0.5s ease-in-out; }
+    .carousel-item { min-width: 100%; text-align: center; display:flex; flex-direction:column; align-items:center; }
+    .carousel-item img { max-height: 500px; width: auto; border-radius: 12px; }
+    .carousel-item h2 { margin-top: 1rem; color: #8ab4f8; font-weight: 500; }
+    .carousel-controls { text-align: center; margin-top: 1rem; }
+    .carousel-controls button { padding: 0.4rem 1rem; margin:0 0.4rem; border:none; border-radius:6px; background:#3a3a6c; color:#fff; cursor:pointer; transition: 0.2s; }
+    .carousel-controls button:hover { background:#5a5aff; }
+  
+    /* ================= Dataset Overview ================= */
+    .dataset h2 { color: #8ab4f8; margin-bottom:1rem; }
+    .dataset p { margin-bottom:1rem; }
+  
+    /* ================= Footer ================= */
+    footer { text-align: center; padding: 2rem; color: #c0c0f0; border-top: 1px solid rgba(0,0,0,0.1); margin-top: 3rem; }
+    .hero-buttons {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+    
+    .btn {
+      padding: 0.6rem 1.5rem;
+      background: linear-gradient(135deg, #6f6fe8, #a3a3ff);
+      color: #fff;
+      font-weight: 600;
+      border-radius: 12px;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+      filter: brightness(1.1);
+    }
+    .hero-teaser img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    
+    /* ================= 按钮 ================= */
+    .hero-buttons .btn {
+      padding: 0.6rem 1.5rem;
+      background: linear-gradient(135deg, #8c8cff, #c3c3ff);
+      color: #1f1f2e;
+      font-weight: 600;
+      border-radius: 12px;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+    }
+    .hero-buttons .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+      filter: brightness(1.1);
+    }
+    .abstract {
+      background: #f1f5ff;      /* 白色背景 */
+      padding: 2rem 0;          /* 上下内边距 */
+    }
+</style>
 </head>
 <body>
 
+<!-- ================= Title + Authors ================= -->
+<section class="hero">
+  <div class="inner-container">
+    <!-- ================= Title ================= -->
+    <h1 class="hero-title">
+      MMSI-Video-Bench: A holistic benchmark for video-based spatial intelligence
+    </h1>
 
-  <section class="hero">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">MMSI-Video-Bench: A Holistic Benchmark for Video-Based Spatial Intelligence</h1>
-            <div class="is-size-5 publication-authors">
-              <!-- Paper authors -->
-              <span class="author-block">
-                <a href="https://github.com/rbler1234" target="_blank">Jingli Lin<sup>1,2*</sup></a>, </span>
-                <span class="author-block">
-                  <a href="https://runsenxu.com/" target="_blank">Runsen Xu<sup>1,3*</sup><sup>†</sup></a>, </span>
-                  <span class="author-block">
-                    <a href="https://openreview.net/profile?id=%7EShaohao_Zhu2" target="_blank">Shaohao Zhu<sup>1,4</sup></a>, 
-                  </span>
-                  <span class="author-block">
-                    <a href="https://sihany077.github.io/" target="_blank">Sihan Yang<sup>1</sup></a>, 
-                  </span>
-                  <span class="author-block">
-                    <a href="https://openreview.net/profile?id=~Peizhou_Cao1" target="_blank">Peizhou Cao<sup>1,5</sup></a>, 
-                  </span> 
-                 
-                  <span class="author-block">
-                    <a href="https://kingteeloki-ran.github.io/" target="_blank">Yunlong Ran<sup>1,4</sup></a>,
-                  </span>
-                  <span class="author-block">
-                    <a href="https://openreview.net/profile?id=~Miao_Hu4" target="_blank">Miao Hu<sup>6</sup></a>,
-                  </span>
-                  <br>
-                  <span class="author-block">
-                    <a href="https://github.com/ZCMax" target="_blank">Chenming Zhu<sup>1,7</sup></a>,
-                  </span>
-                  
-                  <span class="author-block">
-                    <a href="https://kuaikuaixym.github.io/" target="_blank">Yiman Xie<sup>1,4</sup></a>,
-                  </span>
-                  <span class="author-block">
-                    <a href="https://openreview.net/profile?id=%7EYilin_Long2" target="_blank">Yilin Long<sup>1,8</sup></a>,
-                  </span>
-                  <span class="author-block">
-                    <a href="https://gordonhu608.github.io/" target="_blank">Wenbo Hu<sup>1,9</sup></a>,
-                  </span>
-                  
-                  <span class="author-block">
-                    <a href="http://dahua.site/" target="_blank">Dahua Lin<sup>1,3</sup></a>,
-                  </span>
-                  <span class="author-block">
-                    <a href="https://tai-wang.github.io/" target="_blank">Tai Wang<sup>1✉</sup></a>,
-                  </span>
-                  <span class="author-block">
-                    <a href="https://oceanpang.github.io/" target="_blank">Jiangmiao Pang<sup>1✉</sup></a>
-                  </span>
-                  <br>
+    <!-- ================= Teaser 图 ================= -->
+   
 
-
-                  </div>
-
-
-
-                  <div class="is-size-5 publication-authors">
-  
-                    <span class="institution"><sup>1</sup>Shanghai AI Laboratory</span>
-                    <span class="institution"><sup>2</sup>Shanghai Jiaotong University</span>
-                    <span class="institution"><sup>3</sup>The Chinese University of Hong Kong</span>
-                    <br>
-                    <span class="institution"><sup>4</sup>Zhejiang University</span>
-                    <span class="institution"><sup>5</sup>Beihang University</span>
-                    <span class="institution"><sup>6</sup>Xi'an Jiaotong University</span>
-                    <span class="institution"><sup>7</sup>University of Hong Kong</span>
-                    <br>
-                    <span class="institution"><sup>8</sup>Fudan University</span>
-                    <span class="institution"><sup>9</sup>University of California, Los Angeles</span>
-                    <br>
-                    
-                  </div>
-
-                  <div class="is-size-5 publication-authors">
-  
-                    <span class="eql-cntrb"><sup>*</sup>Equal Contribution</span>
-                    <span class="eql-cntrb"><sup>†</sup>Project Lead</span>
-                    
-                  </div>
-
-                  <div class="column has-text-centered">
-                    <div class="publication-links">
-                         <!-- Arxiv PDF link -->
-                      <span class="link-block">
-                        <a href="https://arxiv.org/pdf/2507.07984" target="_blank"
-                        class="external-link button is-normal is-rounded is-dark">
-                        <span class="icon">
-                          <i class="fas fa-file-pdf"></i>
-                        </span>
-                        <span>Paper</span>
-                      </a>
-                    </span>
-
-
-                  <!-- Github link -->
-                  <span class="link-block">
-                    <a href="https://github.com/OpenRobotLab/OST-Bench" target="_blank"
-                    class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon">
-                      <i class="fab fa-github"></i>
-                    </span>
-                    <span>Code</span>
-                  </a>
-                </span>
-
-                <!-- data_1 link -->
-                <span class="link-block">
-                  <a href="https://huggingface.co/datasets/rbler/OST-Bench/tree/main" target="_blank"
-                  class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                    <i class="fas fa-database"></i>
-                  </span>
-                  <span>Data</span>
-                </a>
-              </span>
-
-                <!-- ArXiv abstract Link -->
-                <span class="link-block">
-                  <a href="https://arxiv.org/abs/2507.07984" target="_blank"
-                  class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                    <i class="ai ai-arxiv"></i>
-                  </span>
-                  <span>arXiv</span>
-                </a>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- Teaser video-->
-<section class="hero teaser">
-  <div class="container is-max-desktop">
-    <div class="hero-body">
-      <video poster="" id="tree" autoplay controls muted loop height="100%">
-        <!-- Your video here -->
-        <source src="static/videos/demo.mp4"
-        type="video/mp4">
-      </video>
-      <h2 class="subtitle has-text-centered">
-        MMSI-Video-Bench covers spatial layout reasoning, motion understanding, decision-making, and cross-video reasoning, providing a holistic evaluation of video-based spatial intelligence.
-      </h2>
-    </div>
-  </div>
-</section>
-<!-- End teaser video -->
-
-<!-- Paper abstract -->
-<section class="section hero is-light">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3 section-title">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
-            We introduce MMSI-Video-Bench, a fully human-annotated benchmark for video-based spatial intelligence in MLLMs. It operationalizes a four-level framework, Perception, Planning, Prediction, and Cross-Video Reasoning, through 1,106 questions grounded in 1,278 clips from 25 datasets and in-house videos. Each item is carefully designed and reviewed by 3DV experts with explanatory rationales to ensure precise, unambiguous grounding. We evaluate 25 strong open-source and proprietary MLLMs, revealing a striking human--AI gap: many models perform near chance, and the best reasoning model lags humans by nearly 60%. Fine-grained error analysis exposes systematic failures in geometric reasoning, motion grounding, long-horizon prediction, and cross-video correspondence. We also show that typical frame-sampling strategies transfer poorly to our benchmark due to its reasoning-intensive nature. We expect our benchmark to establish a solid testbed for advancing video-based spatial intelligence.          </p>
-</div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- End paper abstract -->
-
-
-<!-- Image carousel -->
-<section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <!-- 标题部分 -->
-      <div class="columns is-centered has-text-centered" style="margin-bottom: -5rem;">
-        <div class="column">
-          <h2 class="title is-3 section-title" style="margin-bottom: -5rem;">Overview</h2>
-          
-          <!-- 新增的两行介绍文本（字体更大、带圆点、关键字加粗） -->
-          <div class="content-highlight">
-            <ul class="feature-list">
-              <li>
-                <strong>1. High quality.</strong> All data are manually annotated by 11 domain experts in 3D vision, following a rigorous review and acceptance process to ensure annotation accuracy and reliability.
-              </li>
-              <li>
-                <strong>2. Challenging.</strong> We evaluate 25 strong open-source and proprietary MLLMs, revealing a striking human–AI gap, even the best reasoning model trails human performance by nearly 60%.
-              </li>
-              <li>
-                <strong>3. Diverse Video Sources.</strong> MMSI-Video-Bench includes videos from 25 public datasets and 1 in-house collection, spanning tabletop recordings, indoor and multi-floor environments, outdoor scenes, sports, and movie footage.
-              </li>
-              <li>
-                <strong>4. Comprehensive and Hostile Task Coverage.</strong>: The benchmark covers spatial layout reasoning, motion understanding, decision-making, and cross-video reasoning, providing a more holistic evaluation of video-based spatial intelligence.
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- 轮播部分（放大图片） -->
-      <div class="columns is-centered" style="margin-top: 0;">
-        <div class="column is-10">
-          <div id="results-carousel" class="carousel results-carousel">
-            <div class="item has-text-centered">
-              <img src="static/images/benchmark_samples.png" alt="Benchmark Samples" 
-                   style="max-height: 1100px; width: auto; "/>
-              <h2 class="subtitle">llustrative examples of different subtypes in MMSI-Video-Bench. Rel., Inst., and Cam. stand for Relationship, Instance, and Camera.</h2>
-            </div>
-            <div class="item has-text-centered">
-              <img src="static/images/static.png" alt="Static Analysis" 
-                   style="max-height: 1100px; width: auto; "/>
-              <h2 class="subtitle">(Top) The data collection, annotation, and verification pipeline of MMSI-Video-Bench.
-                (Bottom) Dataset statistics of MMSI-Video-Bench, including the proportion of each subtype, the distribution of video durations, and the word cloud.</h2>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- End image carousel -->
-
-
-
-
-
-
-
-  <section class="section">
-    <div class="container">
-      <div class="columns is-centered has-text-centered">
-        <div class="column">
-          <h2 class="title is-3 section-title">Leaderboard</h2>
-  
-          <!-- Dropdown -->
-          <div class="field mt-2" style="justify-content:center; display:flex;">
-            <div class="control">
-              <div class="select is-rounded" style="min-width:40px; max-width:390px;">
-                <select id="leaderboardSelect" onchange="switchLeaderboard()">
-                  <option value="Uniform-50",select>Uniform-50</option>
-                  <option value="Sufficient-Coverage">Sufficient-Coverage</option>
-                  
-                  <option value="robot">Robot Sub-bench</option>
-                  <option value="indoor">Indoor Scene Perception Sub-bench</option>
-                  <option value="grounding">Grounding Sub-bench</option>
-                </select>
-              </div>
-            </div>
-          </div>
-  
-          <!-- Leaderboards -->
-          <div class="leaderboard-card mt-4">
-  
-            <div class="card leaderboard" id="Uniform-50" >
-              <div class="card-content p-0">
-                <div class="table-container">
-                  <table class="table is-fullwidth is-hoverable is-striped">
-                    <thead>
-                      <tr style="background-color:#f5f5f5;">
-                        <th>Model</th>
-                        <th>Avg.(%)</th>
-                        <th>Type</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>human</td>
-                        <td>96.40</td>
-                        <td><i class="fas fa-user"></i> Baseline</td>
-                      </tr>
-                      <tr>
-                        <td>🥇 gemini-3-pro</td>
-                        <td>37.97</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>🥈 o3</td>
-                        <td>36.98</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>🥉 gpt-5</td>
-                        <td>36.80</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>gemini-2.5-flash</td>
-                        <td>35.44</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>gemini-2.5-flash (thinking)</td>
-                        <td>35.17</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>seed-1-6-vision</td>
-                        <td>34.87</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>claude-haiku-4-5</td>
-                        <td>34.27</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>o4-mini</td>
-                        <td>34.18</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL2.5-72B</td>
-                        <td>32.73</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL3-78B</td>
-                        <td>32.55</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>doubao-1-5-thinking</td>
-                        <td>31.65</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>gpt-4o</td>
-                        <td>31.56</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL2.5-78B</td>
-                        <td>31.37</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL2.5-38B</td>
-                        <td>31.01</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL3-30B (Thinking)</td>
-                        <td>30.83</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>LLaVA-Video-72B</td>
-                        <td>30.38</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL3-8B</td>
-                        <td>30.38</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL2.5-VL-7B-Instruct</td>
-                        <td>29.66</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL2.5-8B</td>
-                        <td>29.11</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL3-38B</td>
-                        <td>28.84</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL3-30B</td>
-                        <td>28.75</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL2.5-32B</td>
-                        <td>28.57</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>LLaVA-Video-7B</td>
-                        <td>28.48</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL3-8B</td>
-                        <td>27.58</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVideo2.5-8B</td>
-                        <td>27.40</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>Random Guessing</td>
-                        <td>24.10</td>
-                        <td><i class="fas fa-random"></i> Baseline</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-            <div class="card leaderboard" id="Sufficient-Coverage" style="display:none;">
-              <div class="card-content p-1">
-                <div class="table-container">
-                  <table class="table is-fullwidth is-hoverable is-striped">
-                    <thead>
-                      <tr style="background-color:#f5f5f5;">
-                        <th>Model</th>
-                        <th>Avg.(%)</th>
-                        <th>Type</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>human</td>
-                        <td>96.40</td>
-                        <td><i class="fas fa-user"></i> Baseline</td>
-                      </tr>
-                      <tr>
-                        <td>🥇 o3</td>
-                        <td>37.34</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>🥈 gemini-2.5-flash (thinking)</td>
-                        <td>36.71</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>🥉 gemini-2.5-flash</td>
-                        <td>36.62</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>o4-mini</td>
-                        <td>35.08</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL2.5-32B</td>
-                        <td>32.37</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL2.5-72B</td>
-                        <td>31.83</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL3-8B</td>
-                        <td>29.57</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL3-30B</td>
-                        <td>29.11</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL3-8B</td>
-                        <td>29.09</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL2.5-7B</td>
-                        <td>28.84</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL2.5-8B</td>
-                        <td>28.66</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>gpt-4o</td>
-                        <td>28.12</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL3-30B (thinking)</td>
-                        <td>28.03</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVideo2.5-8B</td>
-                        <td>26.85</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>Random Guessing</td>
-                        <td>24.10</td>
-                        <td><i class="fas fa-random"></i> Baseline</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            <div class="card leaderboard" id="robot" style="display:none;">
-              <div class="card-content p-2">
-                <div class="table-container">
-                  <table class="table is-fullwidth is-hoverable is-striped">
-                    <thead>
-                      <tr style="background-color:#f5f5f5;">
-                        <th>Model</th>
-                        <th>Avg.(%)</th>
-                        <th>Type</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>🥇 gemini-3-pro</td>
-                        <td>40.20</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>🥈 gemini-2.5-flash (thinking)</td>
-                        <td>39.71</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>🥉 seed-1-6-vision</td>
-                        <td>39.34</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>o3</td>
-                        <td>39.22</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL2.5-72B</td>
-                        <td>37.75</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL3-8B</td>
-                        <td>37.75</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>gpt-5</td>
-                        <td>37.75</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL2.5-38B</td>
-                        <td>36.27</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>doubao-1-5-thinking</td>
-                        <td>36.07</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>gemini-2.5-flash</td>
-                        <td>35.78</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>o4-mini</td>
-                        <td>35.29</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL2.5-7B</td>
-                        <td>34.80</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL2.5-78B</td>
-                        <td>34.80</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>claude-haiku-4-5</td>
-                        <td>34.80</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL3-78B</td>
-                        <td>34.31</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>LLaVA-Video-72B</td>
-                        <td>34.31</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL3-30B</td>
-                        <td>32.84</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL2.5-32B</td>
-                        <td>32.84</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL3-8B</td>
-                        <td>32.12</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVideo2.5-8B</td>
-                        <td>29.90</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>gpt-4o</td>
-                        <td>29.90</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL2.5-8B</td>
-                        <td>28.43</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL3-38B</td>
-                        <td>27.94</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL3-30B (Thinking)</td>
-                        <td>27.94</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>LLaVA-Video-7B</td>
-                        <td>24.51</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  
-                </div>
-              </div>
-            </div>
-            <div class="card leaderboard" id="indoor" style="display:none;">
-              <div class="card-content p-3">
-                <div class="table-container">
-                  <table class="table is-fullwidth is-hoverable is-striped">
-                    <thead>
-                      <tr style="background-color:#f5f5f5;">
-                        <th>Model</th>
-                        <th>Avg.(%)</th>
-                        <th>Type</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>🥇 gpt-5</td>
-                        <td>41.68</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>🥈 o3</td>
-                        <td>40.73</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>🥉 gemini-2.5-flash</td>
-                        <td>39.39</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>gemini-3-pro</td>
-                        <td>39.39</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>gemini-2.5-flash (thinking)</td>
-                        <td>37.86</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>o4-mini</td>
-                        <td>37.48</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>seed-1-6-vision</td>
-                        <td>34.20</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>claude-haiku-4-5</td>
-                        <td>33.46</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>doubao-1-5-thinking</td>
-                        <td>33.04</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL3-78B</td>
-                        <td>32.50</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL3-30B (Thinking)</td>
-                        <td>32.31</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>gpt-4o</td>
-                        <td>31.74</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL2.5-72B</td>
-                        <td>30.78</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL2.5-78B</td>
-                        <td>30.40</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL3-30B</td>
-                        <td>30.02</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL2.5-32B</td>
-                        <td>29.64</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL2.5-8B</td>
-                        <td>29.45</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL3-38B</td>
-                        <td>29.06</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL3-8B</td>
-                        <td>28.68</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL2.5-38B</td>
-                        <td>28.30</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>LLaVA-Video-72B</td>
-                        <td>28.11</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL3-8B</td>
-                        <td>27.72</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>LLaVA-Video-7B</td>
-                        <td>27.53</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL2.5-7B</td>
-                        <td>27.15</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVideo2.5-8B</td>
-                        <td>26.77</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  
-                  
-                </div>
-              </div>
-            </div>  
-            <div class="card leaderboard" id="grounding" style="display:none;">
-              <div class="card-content p-4">
-                <div class="table-container">
-                  <table class="table is-fullwidth is-hoverable is-striped">
-                    <thead>
-                      <tr style="background-color:#f5f5f5;">
-                        <th>Model</th>
-                        <th>Avg.(%)</th>
-                        <th>Type</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>🥇 gemini-2.5-flash</td>
-                        <td>38.81</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>🥈 gemini-2.5-flash (thinking)</td>
-                        <td>38.21</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>🥉 o3</td>
-                        <td>37.61</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>doubao-1-5-thinking</td>
-                        <td>37.05</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL3-78B</td>
-                        <td>35.52</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>gpt-5</td>
-                        <td>35.22</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>gemini-3-pro</td>
-                        <td>35.22</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>o4-mini</td>
-                        <td>34.33</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL2.5-72B</td>
-                        <td>34.33</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>seed-1-6-vision</td>
-                        <td>33.04</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>claude-haiku-4-5</td>
-                        <td>32.84</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL2.5-38B</td>
-                        <td>31.94</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL3-8B</td>
-                        <td>31.94</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>gpt-4o</td>
-                        <td>31.94</td>
-                        <td><i class="fas fa-lock"></i> Proprietary</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL3-30B (Thinking)</td>
-                        <td>31.64</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL2.5-32B</td>
-                        <td>31.04</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>LLaVA-Video-72B</td>
-                        <td>31.04</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL3-38B</td>
-                        <td>30.45</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL2.5-8B</td>
-                        <td>30.15</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVL2.5-78B</td>
-                        <td>29.85</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL3-30B</td>
-                        <td>29.25</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL2.5-7B</td>
-                        <td>28.66</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>QwenVL3-8B</td>
-                        <td>28.66</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>InternVideo2.5-8B</td>
-                        <td>27.76</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                      <tr>
-                        <td>LLaVA-Video-7B</td>
-                        <td>27.16</td>
-                        <td><i class="fas fa-lock-open"></i> Open-Source</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  
-                  
-                </div>
-              </div>
-            </div> 
+    <!-- ================= Authors ================= -->
+    <div class="authors" style="margin-bottom:1rem;">
+      <div class="author-names" style="margin-bottom:0.5rem;">
+        <span class="author-block">
+          <a href="https://github.com/rbler1234" target="_blank">Jingli Lin<sup>1,2*</sup></a>, </span>
+          <span class="author-block">
+            <a href="https://runsenxu.com/" target="_blank">Runsen Xu<sup>1,3*</sup><sup>†</sup></a>, </span>
+            <span class="author-block">
+              <a href="https://openreview.net/profile?id=%7EShaohao_Zhu2" target="_blank">Shaohao Zhu<sup>1,4</sup></a>, 
+            </span>
+            <span class="author-block">
+              <a href="https://sihany077.github.io/" target="_blank">Sihan Yang<sup>1</sup></a>, 
+            </span>
+            <span class="author-block">
+              <a href="https://openreview.net/profile?id=~Peizhou_Cao1" target="_blank">Peizhou Cao<sup>1,5</sup></a>, 
+            </span> 
+           
+            <span class="author-block">
+              <a href="https://kingteeloki-ran.github.io/" target="_blank">Yunlong Ran<sup>1,4</sup></a>,
+            </span>
+            <span class="author-block">
+              <a href="https://openreview.net/profile?id=~Miao_Hu4" target="_blank">Miao Hu<sup>6</sup></a>,
+            </span>
+            <br>
+            <span class="author-block">
+              <a href="https://github.com/ZCMax" target="_blank">Chenming Zhu<sup>1,7</sup></a>,
+            </span>
             
-            <!-- 其他 sub-bench 略，可同样添加 class="is-striped is-hoverable" -->
-  
-          </div>
-        </div>
+            <span class="author-block">
+              <a href="https://kuaikuaixym.github.io/" target="_blank">Yiman Xie<sup>1,4</sup></a>,
+            </span>
+            <span class="author-block">
+              <a href="https://openreview.net/profile?id=%7EYilin_Long2" target="_blank">Yilin Long<sup>1,8</sup></a>,
+            </span>
+            <span class="author-block">
+              <a href="https://gordonhu608.github.io/" target="_blank">Wenbo Hu<sup>1,9</sup></a>,
+            </span>
+            
+            <span class="author-block">
+              <a href="http://dahua.site/" target="_blank">Dahua Lin<sup>1,3</sup></a>,
+            </span>
+            <span class="author-block">
+              <a href="https://tai-wang.github.io/" target="_blank">Tai Wang<sup>1✉</sup></a>,
+            </span>
+            <span class="author-block">
+              <a href="https://oceanpang.github.io/" target="_blank">Jiangmiao Pang<sup>1✉</sup></a>
+            </span>
       </div>
+      <div class="author-institutions" style="color:#d2d2f3; font-size:0.95rem; margin-bottom:2rem;">
+        <span>1. Shanghai Jiaotong University &nbsp;&nbsp; 2. Shanghai Jiaotong University &nbsp;&nbsp; 3. The Chinese University of Hong Kong &nbsp;&nbsp; 4. Zhejiang University &nbsp;&nbsp; 5. Beihang University</span>
+        <br>
+        <span>6. Xi'an Jiaotong University &nbsp;&nbsp; 7. University of Hong Kong &nbsp;&nbsp; 8. Fudan University &nbsp;&nbsp; 9. University of California, Los Angeles</span>
+      </div>
+      <span class="eql-cntrb",style="color:#f1f5ff;"><sup>*</sup>Equal Contribution</span>
+      <span class="eql-cntrb",style="color:#f1f5ff;"><sup>†</sup>Project Lead</span>
     </div>
 
-  </section>
+    <!-- ================= Buttons ================= -->
+    <div class="hero-buttons" style="margin-top:1.5rem; display:flex; gap:1.5rem; justify-content:center;">
+
+      <!-- Paper -->
+      <a href="https://openreview.net/group?id=thecvf.com/CVPR/2026/Conference/Authors" class="btn" 
+         style="display:flex; align-items:center; gap:8px; padding:0.6rem 1.2rem;">
+        <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png"
+             alt="Paper" style="width:22px; height:22px;"/>
+        Paper
+      </a>
+    
+      <!-- Code -->
+      <a href="https://github.com/InternRobotics/MMSI-Video-Bench" class="btn"
+         style="display:flex; align-items:center; gap:8px; padding:0.6rem 1.2rem;">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+             alt="GitHub" style="width:22px; height:22px;"/>
+        Code
+      </a>
+    
+      <!-- Datasets -->
+      <a href="https://huggingface.co/datasets/rbler/MMSI-Video-Bench/blob/main/README.md" class="btn"
+         style="display:flex; align-items:center; gap:8px; padding:0.6rem 1.2rem;">
+        <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg"
+             alt="HF" style="width:22px; height:22px;"/>
+        Datasets
+      </a>
+    
+    </div>
+    
+  </div>
+</section>
+
+<!-- ================= Abstract ================= -->
+<section class="abstract">
+  <div class="inner-container">
+    
+
+    <div class="features-row" style="display:flex; justify-content:space-around; gap:3rem; margin-top:0rem; flex-wrap:nowrap;">
+
+      <div class="feature-card" style="flex:1 1 0; max-width:250px; background:#f0f0ff; border-radius:12px; padding:1.2rem; box-shadow:0 4px 12px rgba(0, 0, 0, 0);">
+        <h3 style="color:#6b6bf8; margin-bottom:0.5rem;">Diverse Scenarios</h3>
+        <p style="font-size:0.95rem; color:#1f1f2e;">25 public + 1 in-house datasets covering indoor, outdoor, tabletop, and movie scenes.</p>
+      </div>
+
+      <div class="feature-card" style="flex:1 1 0; max-width:250px; background:#f0f0ff; border-radius:12px; padding:1.2rem; box-shadow:0 4px 12px rgba(0, 0, 0, 0);">
+        <h3 style="color:#6b6bf8; margin-bottom:0.5rem;">High-Quality</h3>
+        <p style="font-size:0.95rem; color:#1f1f2e;">All videos annotated by multiple experts with strict cross-validation and quality control.</p>
+      </div>
+
+      <div class="feature-card" style="flex:1 1 0; max-width:250px; background:#f0f0ff; border-radius:12px; padding:1.2rem; box-shadow:0 4px 12px rgba(0, 0, 0, 0);">
+        <h3 style="color:#6b6bf8; margin-bottom:0.5rem;">Comprehensive Tasks</h3>
+        <p style="font-size:0.95rem; color:#1f1f2e;">Supports spatial layout reasoning, motion understanding, planning, prediction, and cross-video reasoning.</p>
+      </div>
+
+      <div class="feature-card" style="flex:1 1 0; max-width:250px; background:#f0f0ff; border-radius:12px; padding:1.2rem; box-shadow:0 4px 12px rgba(0, 0, 0, 0);">
+        <h3 style="color:#6b6bf8; margin-bottom:0.5rem;">Challenging Benchmark</h3>
+        <p style="font-size:0.95rem; color:#1f1f2e;">Most models perform poorly, highlighting a ~60% human-AI gap and research opportunities.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ================= Demo Video ================= -->
+<section class="demo-video bg-dark">
+  <div class="inner-container">
+    <video poster="" id="tree" autoplay controls muted loop>
+      <source src="static/videos/demo_720.mp4" type="video/mp4">
+    </video>
+    <h2>MMSI-Video-Bench covers spatial layout reasoning, motion understanding, decision-making, and cross-video reasoning, providing a holistic evaluation of video-based spatial intelligence.</h2>
+  </div>
+</section>
+
+
+<!-- ================= Dataset Overview ================= -->
+<section class="dataset bg-light"> 
+  <div class="inner-container">
+    
+    <h2 style="text-align:center; font-size:2.5em;">Overview</h2>
+
+    <!-- Carousel -->
+    <div class="overview-carousel">
+      <div class="slides">
+
+        <div class="slide active">
+          <img src="static/images/benchmark_samples.png">
+          <div class="caption">llustrative examples of different subtypes in MMSI-Video-Bench. Rel., Inst., and Cam. stand for Relationship, Instance, and Camera.</div>
+        </div>
+
+        <div class="slide">
+          <img src="static/images/static.png">
+          <div class="caption">(Top) The data collection, annotation, and verification pipeline of MMSI-Video-Bench.
+            (Bottom) Dataset statistics of MMSI-Video-Bench, including the proportion of each subtype, the distribution of video durations, and the word cloud.</div>
+        </div>
+
+      </div>
+
+      <!-- Dots -->
+      <div class="dots">
+        <span class="dot active" data-index="0"></span>
+        <span class="dot" data-index="1"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<style>
+  .overview-carousel {
+    position: relative;
+    width: 100%;
+    max-width: 900px;   /* 可以改更大 */
+    margin: 0 auto 25px auto;
+  }
   
-  <script>
-    function switchLeaderboard() {
-      const selected = document.getElementById('leaderboardSelect').value;
-      const leaderboards = document.querySelectorAll('.leaderboard');
-      leaderboards.forEach(lb => {
-        lb.style.display = (lb.id === selected) ? 'block' : 'none';
+  .slides {
+    position: relative;
+    width: 100%;
+  }
+  
+  .slide {
+    display: none;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .slide.active {
+    display: block;
+  }
+  
+  .slide img {
+    width: 100%;         /* 展示整张大图 */
+    height: auto;        /* 高度自动适配 */
+    border-radius: 14px;
+  }
+  
+  .caption {
+    font-size: 15px;
+    color: #444;
+    margin-top: 8px;
+    font-style: italic;
+  }
+  
+  .dots {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+  }
+  
+  .dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #bbb;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: background .3s;
+  }
+  
+  .dot.active {
+    background: #0077cc;
+  }
+  
+</style>
+
+<script>
+  const slides = Array.from(document.querySelectorAll(".slide"));
+  const carousel = document.querySelector(".overview-carousel");
+  const dotsContainer = document.querySelector(".dots");
+  let index = 0;
+  let timer = null;
+  
+  // --- 如果没有图片 ---
+  if (slides.length === 0) {
+    carousel.style.display = "none";
+  }
+  
+  // --- 如果只有一张图 ---
+  else if (slides.length === 1) {
+    slides[0].classList.add("active");
+    dotsContainer.style.display = "none";
+  }
+  
+  // --- 多张图（自动轮播 + dots） ---
+  else {
+    function initDots() {
+      dotsContainer.innerHTML = ""; // ← 清空，避免出现 4 个点的问题
+  
+      slides.forEach((_, i) => {
+        const dot = document.createElement("span");
+        dot.className = "dot" + (i === 0 ? " active" : "");
+        dot.dataset.index = i;
+        dotsContainer.appendChild(dot);
       });
     }
-    </script>
   
+    function showSlide(i) {
+      slides.forEach((s, idx) => s.classList.toggle("active", idx === i));
+      document.querySelectorAll(".dot").forEach((d, idx) =>
+        d.classList.toggle("active", idx === i)
+      );
+      index = i;
+    }
+  
+    function startAutoPlay() {
+      if (timer) clearInterval(timer); // ← 避免多个计时器叠加导致卡顿
+      timer = setInterval(() => {
+        index = (index + 1) % slides.length;
+        showSlide(index);
+      }, 3500);
+    }
+  
+    initDots();
+    showSlide(0);
+    startAutoPlay();
+  
+    // --- 点击 dot 切换 ---
+    dotsContainer.addEventListener("click", (e) => {
+      if (e.target.classList.contains("dot")) {
+        const i = parseInt(e.target.dataset.index);
+        showSlide(i);
+        startAutoPlay(); // 点击后重置 autoplay
+      }
+    });
+  }
+  
+  
+</script>
 
+<!-- ================= Quiz ================= -->
+<section class="quiz-section" style="background:linear-gradient(135deg, #d9d7f5, #cbebfe); padding:50px 0; font-family:'Orbitron', sans-serif;"> 
+  <div class="container" style="max-width:900px; margin:auto;">
+    <h2 style="text-align:center; color:#0077cc; font-size:2.5em; margin-bottom:40px;">Quiz Questions</h2>
 
-<section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <!-- 标题部分 -->
-      <div class="columns is-centered has-text-centered" style="margin-bottom: -5rem;">
-        <div class="column">
-          <h2 class="title is-3 section-title">Analysis</h2>
-          
-          <!-- 新增的两行介绍文本（字体更大、带圆点、关键字加粗） -->
-          <div class="content-highlight">
-           
+    <div id="quiz-card" style="border:3px solid #0077cc; border-radius:20px; padding:30px; background:#ffffff; box-shadow:0 10px 30px rgba(0,0,0,0.08); display:flex; flex-direction:column; gap:20px;">
+
+      <div style="display:flex; gap:25px; flex-wrap:wrap;">
+
+        <!-- 左边：视频 + question_type + image -->
+        <div id="left-panel" style="flex:1; min-width:300px; display:flex; flex-direction:column; gap:15px;">
+          <div id="question-type" style="background:#0077cc; color:#ffffff; padding:8px 16px; border-radius:20px; font-weight:600; font-size:0.95em; text-align:center;">
+            Question Type
+          </div>
+          <div id="video-container" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+          <img id="quiz-image" src="" alt="" style="width:100%; border-radius:10px; display:none; object-fit:contain; max-height:200px;"/>
+        </div>
+
+        <!-- 右边：问题 + 选项 + 切换按钮 -->
+        <div id="right-panel" style="flex:1; min-width:300px; display:flex; flex-direction:column; gap:20px;">
+          <div style="background:#f0f8ff; border-radius:12px; padding:20px; min-height:150px;">
+            <h3 id="quiz-question" style="color:#0077cc; font-size:1.0em; line-height:1.5;">Question text</h3>
+          </div>
+
+          <!-- 选项 -->
+          <div id="quiz-options" style="display:flex; flex-direction:column; gap:12px;"></div>
+
+          <!-- 切换按钮 -->
+          <div style="display:flex; justify-content:space-between;">
+            <button id="prev-btn" style="padding:10px 60px; border:none; border-radius:10px; background:#bddafb; color:#0077cc; font-weight:600; cursor:pointer;">Previous One</button>
+            <button id="next-btn" style="padding:10px 60px; border:none; border-radius:10px; background:#bddafb; color:#0077cc; font-weight:600; cursor:pointer;">Next One</button>
           </div>
         </div>
+
       </div>
 
-      <!-- 轮播部分（放大图片） -->
-      <div class="columns is-centered" style="margin-top: 0;">
-        <div class="column is-10">
-          <div id="results-carousel" class="carousel results-carousel">
-            <div class="item has-text-centered">
-              <img src="static/images/analysis1.png" alt="Benchmark Samples" 
-                   style="max-height: 900px; width: auto; "/>
-              <h2 class="subtitle">lustration of five representative error types identified in MMSI-Video-Bench, along with examples of model responses and
-                corresponding error analyses.</h2>
-            </div>
-            <div class="item has-text-centered">
-              <img src="static/images/analysis2.png" alt="Benchmark Samples" 
-                   style="max-height: 900px; width: auto; "/>
-              <h2 class="subtitle">Distribution of the five error types. (Left) Error distribu-
-                tion across different question categories. (Right) Overall propor-
-                tion of each error type.</h2>
-            </div>
-            <div class="item has-text-centered">
-              <img src="static/images/analysis3.png" alt="Benchmark Samples" 
-                   style="max-height: 900px; width: auto; "/>
-              <h2 class="subtitle">Model performance under different frame sampling
-                methods. Dashed lines indicate contiguous sampling, while solid
-                lines indicate uniform sampling.</h2>
-            </div>
-            <div class="item has-text-centered">
-              <img src="static/images/analysis4.png" alt="Benchmark Samples" 
-                   style="max-height: 900px; width: auto; "/>
-              <h2 class="subtitle">Effect of different methods(Equipped with 3D Spatial Cues / Chain-of-Thought Prompting) on model performance.</h2>
-            </div>
-            
-          </div>
+      <!-- reason 横跨左右 -->
+      <!-- <div id="quiz-result" style="font-size:1.0em; font-weight:600; text-align:center; padding:15px 20px; background:#f0f8ff; border-radius:12px; min-height:60px;">
+      </div> -->
+
+      <div id="quiz-result" style="
+    font-size:1.0em;
+    font-weight:600;
+    text-align:center;
+    padding:0 20px;           /* 先不占垂直空间 */
+    background:#f0f8ff;
+    border-radius:12px;
+    height:0;
+    overflow:hidden;
+    transition: height 0.3s ease, opacity 0.3s ease;
+    opacity:0;
+"></div>
+
+
+
+    </div>
+  </div>
+</section>
+
+<script>
+  function createVideoElement(srcArray) {
+    const container = document.createElement("div");
+    container.style.display = "flex";
+    container.style.gap = "10px";
+    container.style.flexWrap = "wrap";
+  
+    const isMultiple = srcArray.length > 1;
+    srcArray.forEach(src => {
+      const vid = document.createElement("video");
+      vid.controls = true;
+      vid.style.borderRadius = "15px";
+  
+      // 单段视频占满宽度，多段视频各占50%
+      vid.style.width = isMultiple ? "49%" : "100%";
+  
+      vid.src = src;
+      vid.muted = true;
+  
+      // poster使用第一帧
+      vid.onloadedmetadata = () => { vid.currentTime = 0; };
+      container.appendChild(vid);
+    });
+  
+    return container;
+  }
+
+function setPosterFirstFrame(videoEl) {
+  videoEl.addEventListener('loadeddata', () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = videoEl.videoWidth;
+    canvas.height = videoEl.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+    videoEl.poster = canvas.toDataURL();
+  }, {once:true});
+}
+
+const quizData = [
+{
+  type:"Spatial Construction Categories",
+  video:"static/videos/spatial.mp4",
+  poster:"thumb2.jpg",
+  question:"How many square-shaped buildings like the ones shown in the figure are there in this area?",
+  image:"static/images/assist2.png",
+  options:["4 yellow and 4 white","5 yellow and 5 white","4 yellow and 5 white","5 yellow and 4 white"],
+  answer:"4 yellow and 4 white",
+  reason:"Focus on the central white building at the boundary of the black square area, and based on it, determine how many buildings are on its left and right."
+},
+{
+  type:"Motion Understanding Categories",
+  video:"static/videos/motion.mp4",
+  poster:"thumb2.jpg",
+  question:"The video shows a painter painting a wall. During which time interval does the painter cover the largest area with the brush?",
+  image:null,
+  options:["0-8s","20-28s","30-38s","48s-1m15s"],
+  answer:"30-38s",
+  reason:"Compared to 0–8 s and 20–28 s, the interval 30–38 s clearly covers a larger area (across two regions), while from 48 s to 1 m 15 s the painter is not using the brush for the latter part of the period."
+},
+{
+  type:"Planning Categories",
+  video:"static/videos/planning.mp4",
+  poster:"thumb2.jpg",
+  question:"I leave the yellow-toned bedroom and want to get out as quickly as possible. How should I go?",
+  image:"static/images/assist3.png",
+  options:["Go straight, pass through the dining area and living room, then exit through the door on the front left.","Go straight, pass through the dining area and living room, then exit through the door on the front right.",
+  "Go straight, turn right before the bathroom, then continue straight through the door to exit.","Go straight, turn right after the bathroom, then continue straight through the door to exit.",
+  ],
+  answer:"Go straight, turn right after the bathroom, then continue straight through the door to exit.",
+  reason:"Options 2 and 3 do not lead out of the house, and compared to option 1, option 4 is slightly closer."
+},
+{
+  type:"Prediction Categories",
+  video:"static/videos/prediction.mp4",
+  poster:"thumb1.jpg",
+  question:"This video captures my driving record up to now. Assuming that the woman shown in the figure walks at a constant average speed and maintains a consistent direction, where is she approximately located at this moment?",
+  image:"static/images/assist1.png",
+  options:["Pink point","Yellow point","Green point","Red point"],
+  answer:"Green point",
+  reason:"From 14.40 s to 16.60 s, the woman moved a distance equivalent to four strip widths. By now (18.80 s), she should have moved an additional four strip widths. Select the green dot to indicate her position."
+},
+
+{
+  type:"Cross-Video Reasoning Categories",
+  video:["static/videos/realworld_0016_0.mp4","static/videos/realworld_0016_1.mp4"],
+  poster:"thumb2.jpg",
+  question:"Alex filmed the same room during two time intervals. Based on the videos, he inferred possible human activities that occurred while he was absent. Which of the following most likely took place?",
+  image:null,
+  options:["Someone used the computer.","Someone went through the books.","Someone refilled the water dispenser.","Someone looked through the contents of the backpack."],
+  answer:"Someone used the computer.",
+  reason:"Among the objects mentioned in the four options, only the computer mouse has been moved."
+}
+];
+
+
+let currentIndex = 0;
+
+const questionEl = document.getElementById("quiz-question");
+const optionsEl = document.getElementById("quiz-options");
+const resultEl = document.getElementById("quiz-result");
+const prevBtn = document.getElementById("prev-btn");
+const nextBtn = document.getElementById("next-btn");
+const typeEl = document.getElementById("question-type");
+const imageEl = document.getElementById("quiz-image");
+const videoContainer = document.getElementById("video-container");
+
+function renderQuestion(index) {
+  const q = quizData[index];
+  resultEl.style.height = "auto";
+  resultEl.style.opacity = 0;
+  resultEl.textContent = "";
+
+  // 清空旧视频
+  videoContainer.innerHTML = "";
+
+  // 视频处理
+  const videos = Array.isArray(q.video) ? q.video : [q.video];
+  const posters = Array.isArray(q.poster) ? q.poster : [q.poster || ""];
+
+  videos.forEach((vid, i) => {
+    const vidEl = document.createElement("video");
+    vidEl.controls = true;
+    vidEl.style.borderRadius = "15px";
+    vidEl.style.height = "auto";
+    
+    // 单段视频占100%，多段视频并列占50%
+    vidEl.style.width = videos.length > 1 ? "47%" : "100%";
+    
+    vidEl.poster = posters[i] || "";
+    
+    const sourceEl = document.createElement("source");
+    sourceEl.src = vid;
+    sourceEl.type = "video/mp4";
+    vidEl.appendChild(sourceEl);
+
+    videoContainer.appendChild(vidEl);
+
+    // 自动播放第一段视频
+    vidEl.play();
+  });
+
+  // 题目、类型、图片、选项、reason渲染保持原样
+  questionEl.textContent = q.question;
+  typeEl.textContent = q.type;
+  resultEl.textContent = "";
+
+  if(q.image){
+    imageEl.src = q.image;
+    imageEl.style.display = "block";
+  } else {
+    imageEl.style.display = "none";
+  }
+
+  // 选项
+  optionsEl.innerHTML = "";
+  q.options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.style.padding = "12px 16px";
+    btn.style.border = "none";
+    btn.style.borderRadius = "10px";
+    btn.style.background = "#e0f4ff";
+    btn.style.color = "#0077cc";
+    btn.style.fontWeight = "600";
+    btn.style.cursor = "pointer";
+    btn.style.transition = "0.2s";
+
+    btn.onmouseover = () => btn.style.background = "#cce4ff";
+    btn.onmouseout = () => btn.style.background = "#e0f4ff";
+
+    btn.onclick = () => {
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+    
+      resultEl.style.opacity = 1; // 开始显示
+      resultEl.textContent = (opt === q.answer ? "Correct! " : "Incorrect. ") 
+                             + "Answer: " + q.answer + " | Reason: " + q.reason;
+    
+      // 测量内容高度
+      resultEl.style.height = "auto";
+      let autoHeight = resultEl.offsetHeight + "px";
+      resultEl.style.height = "0px"; // 先归零
+      void resultEl.offsetWidth;      // 强制重绘触发 transition
+      resultEl.style.height = autoHeight; // 展开
+    
+      // 改变按钮颜色
+      if(opt === q.answer){
+        btn.style.background = "#00aa00";
+        btn.style.color = "#ffffff";
+        resultEl.style.color = "#00aa00";
+      } else {
+        btn.style.background = "#cc0000";
+        btn.style.color = "#ffffff";
+        resultEl.style.color = "#cc0000";
+      }
+    
+      // 保证左右面板高度一致
+      const leftHeight = document.getElementById("left-panel").offsetHeight;
+      const rightHeight = document.getElementById("right-panel").offsetHeight;
+      const maxHeight = Math.max(leftHeight, rightHeight);
+      document.getElementById("left-panel").style.minHeight = maxHeight + "px";
+      document.getElementById("right-panel").style.minHeight = maxHeight + "px";
+    };
+    
+    
+    optionsEl.appendChild(btn);
+  });
+}
+
+// 切换题目
+prevBtn.onclick = () => {
+  currentIndex = (currentIndex-1+quizData.length) % quizData.length;
+  renderQuestion(currentIndex);
+};
+
+nextBtn.onclick = () => {
+  currentIndex = (currentIndex+1) % quizData.length;
+  renderQuestion(currentIndex);
+};
+
+renderQuestion(currentIndex);
+</script>
+
+
+
+
+
+<!-- ================= Leaderboard ================= -->
+<section class="leaderboard" style="background:#f4fdff; padding:50px 0; font-family:'Orbitron', sans-serif;">
+  <div class="inner-container" style="max-width:1200px; margin:auto;">
+    <h2 style="text-align:center; color:#0077cc; font-size:2.5em; margin-bottom:20px;">Leaderboard</h2>
+
+    <div style="display:flex; justify-content:center; margin-bottom:30px;">
+      <select id="leaderboard-select" style="background:#ffffff; color:#0077cc; border:1px solid #0077cc; padding:10px 20px; border-radius:8px; font-weight:600; font-size:16px;">
+        <option value="Uniform-50 Setting" selected>📦 Uniform-50 Setting</option>
+        <option value="Sufficient-Coverage Setting">📦 Sufficient-Coverage Setting</option>
+        <option value="Robot Bench">🤖 Robot Bench</option>
+        <option value="Indoor Scene Perception Bench">🏠 Indoor Scene Perception Bench</option>
+        <option value="Grounding Bench">📍 Grounding Bench</option>
+      </select>
+    </div>
+
+    <div class="table-card" style="background:#ffffff; border-radius:15px; box-shadow:0 12px 30px rgba(0,0,0,0.08); overflow-x:auto;">
+      <table id="leaderboard-table" style="width:100%; border-collapse:separate; border-spacing:0 8px; color:#333;">
+        <thead>
+          <tr style="background:linear-gradient(90deg,#cce4ff,#99ccff); font-weight:700; text-transform:uppercase; letter-spacing:1px;">
+            <th style="padding:15px; border-top-left-radius:15px;">Rank</th>
+            <th style="padding:15px;">Model</th>
+            <th style="padding:15px;">Avg.(%)</th>
+            <th style="padding:15px; border-top-right-radius:15px;">Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS 自动生成 -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script>
+  const leaderboardData = {
+    "Uniform-50 Setting": [
+    {model:"Gemini 3 pro", avg:37.97, type:"Proprietary"},
+    {model:"O3", avg:36.98, type:"Proprietary"},
+    {model:"GPT-5", avg:36.80, type:"Proprietary"},
+    {model:"Gemini 2.5 Flash", avg:35.44, type:"Proprietary"},
+    {model:"Gemini 2.5 Flash (Thinking)", avg:35.17, type:"Proprietary"},
+    {model:"Seed-1.6-vision", avg:34.87, type:"Proprietary"},
+    {model:"Claude-haiku-4.5", avg:34.27, type:"Proprietary"},
+    {model:"O4-mini", avg:34.18, type:"Proprietary"},
+    {model:"QwenVL2.5-72B", avg:32.73, type:"Open-Source"},
+    {model:"InternVL3-78B", avg:32.55, type:"Open-Source"},
+    {model:"Doubao-1.5-thinking", avg:31.65, type:"Proprietary"},
+    {model:"GPT-4o", avg:31.56, type:"Proprietary"},
+    {model:"InternVL2.5-78B", avg:31.37, type:"Open-Source"},
+    {model:"InternVL2.5-38B", avg:31.01, type:"Open-Source"},
+    {model:"QwenVL3-30B (Thinking)", avg:30.83, type:"Open-Source"},
+    {model:"LLaVA-Video-72B", avg:30.38, type:"Open-Source"},
+    {model:"InternVL3-8B", avg:30.38, type:"Open-Source"},
+    {model:"QwenVL2.5-VL-7B-Instruct", avg:29.66, type:"Open-Source"},
+    {model:"InternVL2.5-8B", avg:29.11, type:"Open-Source"},
+    {model:"InternVL3-38B", avg:28.84, type:"Open-Source"},
+    {model:"QwenVL3-30B", avg:28.75, type:"Open-Source"},
+    {model:"QwenVL2.5-32B", avg:28.57, type:"Open-Source"},
+    {model:"LLaVA-Video-7B", avg:28.48, type:"Open-Source"},
+    {model:"QwenVL3-8B", avg:27.58, type:"Open-Source"},
+    {model:"InternVideo2.5-8B", avg:27.40, type:"Open-Source"},
+    {model:"Random Guessing", avg:24.10, type:"Baseline"}
+  ],
+    "Sufficient-Coverage Setting": [
+    {model:"O3", avg:37.34, type:"Proprietary"},
+    {model:"Gemini 2.5 Flash (Thinking)", avg:36.71, type:"Proprietary"},
+    {model:"Gemini 2.5 Flash", avg:36.62, type:"Proprietary"},
+    {model:"O4-mini", avg:35.08, type:"Proprietary"},
+    {model:"QwenVL2.5-32B", avg:32.37, type:"Open-Source"},
+    {model:"QwenVL2.5-72B", avg:31.83, type:"Open-Source"},
+    {model:"InternVL3-8B", avg:29.57, type:"Open-Source"},
+    {model:"QwenVL3-30B", avg:29.11, type:"Open-Source"},
+    {model:"QwenVL3-8B", avg:29.09, type:"Open-Source"},
+    {model:"QwenVL2.5-7B", avg:28.84, type:"Open-Source"},
+    {model:"InternVL2.5-8B", avg:28.66, type:"Open-Source"},
+    {model:"GPT-4o", avg:28.12, type:"Proprietary"},
+    {model:"QwenVL3-30B (Thinking)", avg:28.03, type:"Open-Source"},
+    {model:"InternVideo2.5-8B", avg:26.85, type:"Open-Source"},
+    {model:"Random Guessing", avg:24.10, type:"Baseline"}
+  ],
+    "Robot Bench":[
+    {model:"Gemini 3 Pro", avg:40.20, type:"Proprietary"},
+    {model:"Gemini 2.5 Flash (Thinking)", avg:39.71, type:"Proprietary"},
+    {model:"Seed-1.6-vision", avg:39.34, type:"Proprietary"},
+    {model:"O3", avg:39.22, type:"Proprietary"},
+    {model:"QwenVL2.5-72B", avg:37.75, type:"Open-Source"},
+    {model:"InternVL3-8B", avg:37.75, type:"Open-Source"},
+    {model:"GPT-5", avg:37.75, type:"Proprietary"},
+    {model:"InternVL2.5-38B", avg:36.27, type:"Open-Source"},
+    {model:"Doubao-1.5-thinking", avg:36.07, type:"Proprietary"},
+    {model:"Gemini 2.5 Flash", avg:35.78, type:"Proprietary"},
+    {model:"O4-mini", avg:35.29, type:"Proprietary"},
+    {model:"QwenVL2.5-7B", avg:34.80, type:"Open-Source"},
+    {model:"InternVL2.5-78B", avg:34.80, type:"Open-Source"},
+    {model:"Claude-haiku-4.5", avg:34.80, type:"Proprietary"},
+    {model:"InternVL3-78B", avg:34.31, type:"Open-Source"},
+    {model:"LLaVA-Video-72B", avg:34.31, type:"Open-Source"},
+    {model:"QwenVL3-30B", avg:32.84, type:"Open-Source"},
+    {model:"QwenVL2.5-32B", avg:32.84, type:"Open-Source"},
+    {model:"QwenVL3-8B", avg:32.12, type:"Open-Source"},
+    {model:"InternVideo2.5-8B", avg:29.90, type:"Open-Source"},
+    {model:"GPT-4o", avg:29.90, type:"Proprietary"},
+    {model:"InternVL2.5-8B", avg:28.43, type:"Open-Source"},
+    {model:"InternVL3-38B", avg:27.94, type:"Open-Source"},
+    {model:"QwenVL3-30B (Thinking)", avg:27.94, type:"Open-Source"},
+    {model:"LLaVA-Video-7B", avg:24.51, type:"Open-Source"}
+  ],
+    "Indoor Scene Perception Bench":[
+    {model:"GPT-5", avg:41.68, type:"Proprietary"},
+    {model:"O3", avg:40.73, type:"Proprietary"},
+    {model:"Gemini 2.5 Flash", avg:39.39, type:"Proprietary"},
+    {model:"Gemini 3 Pro", avg:39.39, type:"Proprietary"},
+    {model:"Gemini 2.5 Flash (Thinking)", avg:37.86, type:"Proprietary"},
+    {model:"O4-mini", avg:37.48, type:"Proprietary"},
+    {model:"Seed-1.6-vision", avg:34.20, type:"Proprietary"},
+    {model:"Claude-haiku-4.5", avg:33.46, type:"Proprietary"},
+    {model:"Doubao-1.5-thinking", avg:33.04, type:"Proprietary"},
+    {model:"InternVL3-78B", avg:32.50, type:"Open-Source"},
+    {model:"QwenVL3-30B (Thinking)", avg:32.31, type:"Open-Source"},
+    {model:"GPT-4o", avg:31.74, type:"Proprietary"},
+    {model:"QwenVL2.5-72B", avg:30.78, type:"Open-Source"},
+    {model:"InternVL2.5-78B", avg:30.40, type:"Open-Source"},
+    {model:"QwenVL3-30B", avg:30.02, type:"Open-Source"},
+    {model:"QwenVL2.5-32B", avg:29.64, type:"Open-Source"},
+    {model:"InternVL2.5-8B", avg:29.45, type:"Open-Source"},
+    {model:"InternVL3-38B", avg:29.06, type:"Open-Source"},
+    {model:"QwenVL3-8B", avg:28.68, type:"Open-Source"},
+    {model:"InternVL2.5-38B", avg:28.30, type:"Open-Source"},
+    {model:"LLaVA-Video-72B", avg:28.11, type:"Open-Source"},
+    {model:"InternVL3-8B", avg:27.72, type:"Open-Source"},
+    {model:"LLaVA-Video-7B", avg:27.53, type:"Open-Source"},
+    {model:"QwenVL2.5-7B", avg:27.15, type:"Open-Source"},
+    {model:"InternVideo2.5-8B", avg:26.77, type:"Open-Source"}
+  ],
+    "Grounding Bench":[
+    {model:"Gemini 2.5 Flash", avg:38.81, type:"Proprietary"},
+    {model:"Gemini 2.5 Flash (Thinking)", avg:38.21, type:"Proprietary"},
+    {model:"O3", avg:37.61, type:"Proprietary"},
+    {model:"Doubao-1.5-thinking", avg:37.05, type:"Proprietary"},
+    {model:"InternVL3-78B", avg:35.52, type:"Open-Source"},
+    {model:"GPT-5", avg:35.22, type:"Proprietary"},
+    {model:"Gemini 3 Pro", avg:35.22, type:"Proprietary"},
+    {model:"O4-mini", avg:34.33, type:"Proprietary"},
+    {model:"QwenVL2.5-72B", avg:34.33, type:"Open-Source"},
+    {model:"Seed-1.6-vision", avg:33.04, type:"Proprietary"},
+    {model:"Claude-haiku-4.5", avg:32.84, type:"Proprietary"},
+    {model:"InternVL2.5-38B", avg:31.94, type:"Open-Source"},
+    {model:"InternVL3-8B", avg:31.94, type:"Open-Source"},
+    {model:"GPT-4o", avg:31.94, type:"Proprietary"},
+    {model:"QwenVL3-30B (Thinking)", avg:31.64, type:"Open-Source"},
+    {model:"QwenVL2.5-32B", avg:31.04, type:"Open-Source"},
+    {model:"LLaVA-Video-72B", avg:31.04, type:"Open-Source"},
+    {model:"InternVL3-38B", avg:30.45, type:"Open-Source"},
+    {model:"InternVL2.5-8B", avg:30.15, type:"Open-Source"},
+    {model:"InternVL2.5-78B", avg:29.85, type:"Open-Source"},
+    {model:"QwenVL3-30B", avg:29.25, type:"Open-Source"},
+    {model:"QwenVL2.5-7B", avg:28.66, type:"Open-Source"},
+    {model:"QwenVL3-8B", avg:28.66, type:"Open-Source"},
+    {model:"InternVideo2.5-8B", avg:27.76, type:"Open-Source"},
+    {model:"LLaVA-Video-7B", avg:27.16, type:"Open-Source"}
+  ]  
+
+  };
+
+  const select = document.getElementById("leaderboard-select");
+  const tbody = document.querySelector("#leaderboard-table tbody");
+
+  const rankIcons = ["🥇","🥈","🥉"];
+  const typeIcons = {
+    "Proprietary":"🔒",
+    "Open-Source":"🔓"
+  };
+
+  function renderTable(key) {
+    tbody.innerHTML = "";
+    const data = leaderboardData[key] || [];
+    data.forEach((item, index) => {
+      const tr = document.createElement("tr");
+      // 高级卡片效果 + hover
+      tr.style.background="#ffffff";
+      tr.style.boxShadow="0 4px 12px rgba(0,0,0,0.05)";
+      tr.style.borderRadius="12px";
+      tr.style.transition="0.3s";
+      tr.onmouseover = () => tr.style.transform="translateY(-3px)";
+      tr.onmouseout = () => tr.style.transform="translateY(0)";
+
+      // 前三名背景颜色稍微区分
+      if(index<3) tr.style.background="#fff8e6";
+
+      const rankContent = index<3 ? rankIcons[index]+" "+(index+1) : (index+1);
+
+      tr.innerHTML = `
+        <td style="padding:12px; font-weight:600;">${rankContent}</td>
+        <td style="padding:12px;">${item.model}</td>
+        <td style="padding:12px; color:#0077cc; font-weight:600;">${item.avg.toFixed(2)}</td>
+        <td style="padding:12px;">${typeIcons[item.type] || ""} ${item.type}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  select.addEventListener("change", () => renderTable(select.value));
+  renderTable(select.value);
+</script>
+
+
+
+
+<!-- ================= Analysis Carousel ================= -->
+<section class="dataset bg-dark"> 
+  <div class="inner-container">
+    
+    <h2 style="text-align:center; font-size:2.5em;">Analysis</h2>
+
+    <!-- Carousel -->
+    <div class="overview-carousel">
+      <div class="slidest">
+
+        <div class="slidet active">
+          <img src="static/images/analysis1.png">
+          <div class="caption">Illustration of five representative error types identified in MMSI-Video-Bench, along with examples of model responses and
+            corresponding error analyses.</div>
         </div>
+
+        <div class="slidet">
+          <img src="static/images/analysis2.png">
+          <div class="caption">Distribution of the five error types. (Left) Error distribu-
+            tion across different question categories. (Right) Overall propor-
+            tion of each error type.</div>
+        </div>
+        <div class="slidet">
+          <img src="static/images/analysis3.png">
+          <div class="caption">Model performance under different frame sampling
+            methods. Dashed lines indicate contiguous sampling, while solid
+            lines indicate uniform sampling.</div>
+        </div>
+
+        <div class="slidet">
+          <img src="static/images/analysis4.png">
+          <div class="caption">Effect of different methods(Equipped with 3D Spatial Cues / Chain-of-Thought Prompting) on model performance.</div>
+        </div>
+
+
+      </div>
+
+      <!-- Dots -->
+      <div class="dotst">
+        <span class="dott active" data-index="0"></span>
+        <span class="dott" data-index="1"></span>
+        <span class="dott" data-index="2"></span>
+        <span class="dott" data-index="3"></span>
       </div>
     </div>
   </div>
 </section>
 
 
+<style>
+  .analysis-carousel {
+    position: relative;
+    width: 100%;
+    max-width: 900px;   /* 可以改更大 */
+    margin: 0 auto 25px auto;
+  }
+  
+  .slidest {
+    position: relative;
+    width: 100%;
+  }
+  
+  .slidet {
+    display: none;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .slidet.active {
+    display: block;
+  }
+  
+  .slidet img {
+    width: 100%;         /* 展示整张大图 */
+    height: auto;        /* 高度自动适配 */
+    border-radius: 14px;
+  }
+  
+  .caption {
+    font-size: 15px;
+    color: #444;
+    margin-top: 8px;
+    font-style: italic;
+  }
+  
+  .dotst {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+  }
+  
+  .dott {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #bbb;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: background .3s;
+  }
+  
+  .dott.active {
+    background: #0077cc;
+  }
+  
+</style>
 
-<!--BibTex citation -->
-  <section class="section" id="BibTeX">
-    <div class="container is-max-desktop content">
-      <h2 class="title">BibTeX</h2>
-      <pre><code>@article{lin2025ostbench,
-        title={OST-Bench: Evaluating the Capabilities of MLLMs in Online Spatio-temporal Scene Understanding},
-        author={JingLi Lin and Chenming Zhu and Runsen Xu and Xiaohan Mao and Xihui Liu and Tai Wang and Jiangmiao Pang},
-        journal={arXiv preprint arXiv:2507.07984},
-        year={2025}
-      }</code></pre>
-    </div>
-</section>
-<!--End BibTex citation -->
+<script>
+  const slidest = Array.from(document.querySelectorAll(".slidet"));
+  const carouselt = document.querySelector(".analysis-carousel");
+  const dotsContainert = document.querySelector(".dotst");
+  let indext = 0;
+  let timert = null;
+  
+  // --- 如果没有图片 ---
+  if (slidest.length === 0) {
+    carouselt.style.display = "none";
+  }
+  
+  // --- 如果只有一张图 ---
+  else if (slidest.length === 1) {
+    slidest[0].classList.add("active");
+    dotsContainert.style.display = "none";
+  }
+  
+  // --- 多张图（自动轮播 + dots） ---
+  else {
+    function initDots() {
+      dotsContainert.innerHTML = ""; // ← 清空，避免出现 4 个点的问题
+  
+      slidest.forEach((_, i) => {
+        const dot = document.createElement("span");
+        dot.className = "dott" + (i === 0 ? " active" : "");
+        dot.dataset.index = i;
+        dotsContainert.appendChild(dot);
+      });
+    }
+  
+    function showSlide(i) {
+      slidest.forEach((s, idx) => s.classList.toggle("active", idx === i));
+      document.querySelectorAll(".dott").forEach((d, idx) =>
+        d.classList.toggle("active", idx === i)
+      );
+      index = i;
+    }
+  
+    function startAutoPlay() {
+      if (timer) clearInterval(timer); // ← 避免多个计时器叠加导致卡顿
+      timer = setInterval(() => {
+        index = (index + 1) % slidest.length;
+        showSlide(index);
+      }, 3500);
+    }
+  
+    initDots();
+    showSlide(0);
+    startAutoPlay();
+  
+    // --- 点击 dot 切换 ---
+    dotsContainert.addEventListener("click", (e) => {
+      if (e.target.classList.contains("dott")) {
+        const i = parseInt(e.target.dataset.index);
+        showSlide(i);
+        startAutoPlay(); // 点击后重置 autoplay
+      }
+    });
+  }
+  
+  
+</script>
 
 
-  <footer class="footer">
-  <div class="container">
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content">
-
-          <p>
-            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
-            You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
-            Commons Attribution-ShareAlike 4.0 International License</a>.
-          </p>
-
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- ================= Footer ================= -->
+<footer>
+  &copy; 2025 MMSI-Video-Bench | <a href="#">GitHub Repo</a>
 </footer>
 
-<!-- Statcounter tracking code -->
-  
-<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
 
-    <!-- End of Statcounter Code -->
 
-  </body>
-  </html>
+
+
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
