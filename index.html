@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MMSI-Video-Bench</title>
 
+
+<link rel="icon" type="image/pn" href="static/images/ost.ico">
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
@@ -223,7 +225,7 @@
 
 <!-- ================= Abstract ================= -->
 <section class="abstract">
-  <div class="inner-container">
+  <div class="inner-container" style="max-width: 1600px; margin: 0 auto;">
     <div class="features-row" style="display:flex; justify-content:space-around; gap:2rem; margin-top:0rem; flex-wrap:nowrap;">
       
       <div class="feature-card" style="flex:1 1 0; max-width:500px; background:#f0f0ff; border-radius:12px; padding:1.2rem; box-shadow:0 4px 12px rgba(0, 0, 0, 0);">
@@ -246,6 +248,15 @@
         <p style="font-size:1.2rem; color:#1f1f2e;">Most models perform poorly on MMSI-Video-Bench, highlighting a ~<strong>60% human-AI gap</strong>.</p>
       </div>
 
+      <div class="feature-card" style="flex:1 1 0; max-width:500px; background:#f0f0ff; border-radius:12px; padding:1.2rem; box-shadow:0 4px 12px rgba(0, 0, 0, 0);">
+        <h3 style="color:#6b6bf8; margin-bottom:0.5rem; font-size:2.0rem;"> Multifaceted Perspectives        </h3>
+        <p style="font-size:1.2rem; color:#1f1f2e;">🏠 <strong>Indoor Scene Perception Bench</strong> </p>
+       
+        <p style="font-size:1.2rem; color:#1f1f2e;">🤖 <strong>Robot Bench</strong></p>
+      
+        <p style="font-size:1.2rem; color:#1f1f2e;">📍 <strong>Grounding Bench</strong></p>
+      </div>
+
     </div>
   </div>
 </section>
@@ -257,7 +268,7 @@
 <section class="demo-video bg-dark">
   <div class="inner-container">
     <video poster="" id="tree" autoplay controls muted loop>
-      <source src="static/videos/demo_720.mp4" type="video/mp4">
+      <source src="static/videos/demo_720_crop.mp4" type="video/mp4">
     </video>
     <h2>MMSI-Video-Bench covers spatial layout reasoning, motion understanding, decision-making, and cross-video reasoning, providing a holistic evaluation of video-based spatial intelligence.</h2>
   </div>
@@ -652,9 +663,10 @@ function renderQuestion(index) {
       Array.from(optionsEl.children).forEach(b => b.disabled = true);
     
       resultEl.style.opacity = 1; // 开始显示
-      resultEl.textContent = (opt === q.answer ? "Correct! " : "Incorrect. ") 
-                             + "Answer: " + q.answer + " | Reason: " + q.reason;
-    
+      resultEl.innerHTML =
+  (opt === q.answer ? "Correct!" : "Incorrect.") +
+  " Answer: " + q.answer +
+  "<br>Reason: " + q.reason;
       // 测量内容高度
       resultEl.style.height = "auto";
       let autoHeight = resultEl.offsetHeight + "px";
@@ -912,178 +924,124 @@ renderQuestion(currentIndex);
 
 
 
-<!-- ================= Analysis Carousel ================= -->
-<section class="dataset bg-dark"> 
-  <div class="inner-container">
-    
-    <h2 style="text-align:center; font-size:2.5em;">Analysis</h2>
+<!-- ===================== Analysis Section ===================== -->
+<section id="analysis" style="padding: 60px 0; background: #f5f6ff;">
+  <div style="max-width: 1200px; margin: auto; display: flex; gap: 40px;">
 
-    <!-- Carousel -->
-    <div class="overview-carousel">
-      <div class="slidest">
+    <!-- Sidebar Navigation -->
+    <aside style="width: 260px; position: sticky; top: 100px; background: #eef0ff; border-radius: 12px; padding: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.05);">
+      <h2 style="font-size: 24px; margin-bottom: 16px; color: #4b4bf8; text-align:center;">Analysis</h2>
+      <ul id="analysis-nav" style="list-style: none; padding-left: 0; line-height: 2; font-size: 16px;"></ul>
+    </aside>
 
-        <div class="slidet active">
-          <img src="static/images/analysis1.png">
-          <div class="caption">Illustration of five representative error types identified in MMSI-Video-Bench, along with examples of model responses and
-            corresponding error analyses.</div>
-        </div>
+    <!-- Content Area -->
+    <div id="analysis-content" style="flex: 1; font-size: 17px; line-height: 1.8;"></div>
 
-        <div class="slidet">
-          <img src="static/images/analysis2.png">
-          <div class="caption">Distribution of the five error types. (Left) Error distribu-
-            tion across different question categories. (Right) Overall propor-
-            tion of each error type.</div>
-        </div>
-        <div class="slidet">
-          <img src="static/images/analysis3.png">
-          <div class="caption">Model performance under different frame sampling
-            methods. Dashed lines indicate contiguous sampling, while solid
-            lines indicate uniform sampling.</div>
-        </div>
-
-        <div class="slidet">
-          <img src="static/images/analysis4.png">
-          <div class="caption">Effect of different methods(Equipped with 3D Spatial Cues / Chain-of-Thought Prompting) on model performance.</div>
-        </div>
-
-
-      </div>
-
-      <!-- Dots -->
-      <div class="dotst">
-        <span class="dott active" data-index="0"></span>
-        <span class="dott" data-index="1"></span>
-        <span class="dott" data-index="2"></span>
-        <span class="dott" data-index="3"></span>
-      </div>
-    </div>
   </div>
 </section>
 
-
-<style>
-  .analysis-carousel {
-    position: relative;
-    width: 100%;
-    max-width: 900px;   /* 可以改更大 */
-    margin: 0 auto 25px auto;
-  }
-  
-  .slidest {
-    position: relative;
-    width: 100%;
-  }
-  
-  .slidet {
-    display: none;
-    width: 100%;
-    text-align: center;
-  }
-  
-  .slidet.active {
-    display: block;
-  }
-  
-  .slidet img {
-    width: 100%;         /* 展示整张大图 */
-    height: auto;        /* 高度自动适配 */
-    border-radius: 14px;
-  }
-  
-  .caption {
-    font-size: 15px;
-    color: #444;
-    margin-top: 8px;
-    font-style: italic;
-  }
-  
-  .dotst {
-    display: flex;
-    justify-content: center;
-    margin-top: 12px;
-  }
-  
-  .dott {
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    background: #bbb;
-    margin: 0 5px;
-    cursor: pointer;
-    transition: background .3s;
-  }
-  
-  .dott.active {
-    background: #0077cc;
-  }
-  
-</style>
-
 <script>
-  const slidest = Array.from(document.querySelectorAll(".slidet"));
-  const carouselt = document.querySelector(".analysis-carousel");
-  const dotsContainert = document.querySelector(".dotst");
-  let indext = 0;
-  let timert = null;
-  
-  // --- 如果没有图片 ---
-  if (slidest.length === 0) {
-    carouselt.style.display = "none";
+const analyses = [
+  {
+    id: "a1",
+    title: "Evaluation of Spatially Fine-tuned Models",
+    text: "We also evaluate models that have been spatially fine-tuned (VLM3R, Spatial-MLLM, SpaceQwen), yet their capabilities still fail to generalize effectively on our benchmark. ",
+    images: [
+    ]
+  },
+  {
+    id: "a2",
+    title: "Frame Sampling Study",
+    text: "Due to the reasoning-intensive nature of our benchmark, the commonly used frame-sampling strategy AKS does not transfer directly to MMSI-Video-Bench, leading to additional performance degradation. ",
+    images: []
+  },
+  {
+    id: "a3",
+    title: "Error Categories and Statistics",
+    text: "We categorize all model errors in our bench into non-overlapping, comprehensive type (Detailed Grounding Error, ID Mapping Error, Geometric Reasoning Error, Prompt Alignment Error, Latent Logical Inference Error ) and perform per-category error analysis. For Spatial Construction, failures are dominated by geometric reasoning errors; for Motion, by fine-grained grounding failures on fast, subtle, or long-duration motion; for Planning and Prediction, by prompt--evidence misalignment where models ignore video cues; and for Cross-Video Reasoning, by difficult grounding and matching correspondences across videos.",
+    images: ["static/images/analysis1.png","static/images/analysis2.png"]
+  },
+  {
+    id: "a4",
+    title: "Preliminary Exploration for Model Improvement",
+    text: "Our preliminary exploration shows that neither 3D spatial cues nor chain-of-thought prompting yields meaningful gains on MMSI-Video-Bench.",
+    images: ["static/images/analysis4.png"]
   }
-  
-  // --- 如果只有一张图 ---
-  else if (slidest.length === 1) {
-    slidest[0].classList.add("active");
-    dotsContainert.style.display = "none";
-  }
-  
-  // --- 多张图（自动轮播 + dots） ---
-  else {
-    function initDots() {
-      dotsContainert.innerHTML = ""; // ← 清空，避免出现 4 个点的问题
-  
-      slidest.forEach((_, i) => {
-        const dot = document.createElement("span");
-        dot.className = "dott" + (i === 0 ? " active" : "");
-        dot.dataset.index = i;
-        dotsContainert.appendChild(dot);
-      });
-    }
-  
-    function showSlide(i) {
-      slidest.forEach((s, idx) => s.classList.toggle("active", idx === i));
-      document.querySelectorAll(".dott").forEach((d, idx) =>
-        d.classList.toggle("active", idx === i)
-      );
-      index = i;
-    }
-  
-    function startAutoPlay() {
-      if (timer) clearInterval(timer); // ← 避免多个计时器叠加导致卡顿
-      timer = setInterval(() => {
-        index = (index + 1) % slidest.length;
-        showSlide(index);
-      }, 3500);
-    }
-  
-    initDots();
-    showSlide(0);
-    startAutoPlay();
-  
-    // --- 点击 dot 切换 ---
-    dotsContainert.addEventListener("click", (e) => {
-      if (e.target.classList.contains("dott")) {
-        const i = parseInt(e.target.dataset.index);
-        showSlide(i);
-        startAutoPlay(); // 点击后重置 autoplay
-      }
-    });
-  }
-  
-  
+];
+
+// 生成左侧导航栏
+const navEl = document.getElementById("analysis-nav");
+analyses.forEach(a => {
+  const li = document.createElement("li");
+  li.innerHTML = `<a href="#${a.id}" style="
+                    display:block;
+                    padding: 6px 10px;
+                    border-radius: 6px;
+                    color:#4b4bf8;
+                    text-decoration:none;
+                    transition: all 0.2s;
+                  "
+                  onmouseover="this.style.background='linear-gradient(90deg,#6b6bf8,#9f8fff)'; this.style.color='white';"
+                  onmouseout="this.style.background=''; this.style.color='#4b4bf8';"
+                  >
+                  • ${a.title}</a>`;
+  navEl.appendChild(li);
+});
+
+// 生成内容区
+const contentEl = document.getElementById("analysis-content");
+
+analyses.forEach(a => {
+  const section = document.createElement("div");
+  section.id = a.id;
+  section.style.marginBottom = "60px";
+  section.style.background = "white";
+  section.style.padding = "20px 25px";
+  section.style.borderRadius = "12px";
+  section.style.boxShadow = "0 6px 20px rgba(0,0,0,0.08)";
+
+  // 标题
+  section.innerHTML = `<h3 style="font-size: 22px; margin-bottom: 12px; color:#4b4bf8;">${a.title}</h3>
+                       <p style="margin-bottom: 16px; color:#333;">${a.text}</p>`;
+
+  // 图片
+  a.images.forEach(img => {
+    const imgEl = document.createElement("img");
+    imgEl.src = img;
+    imgEl.style.width = "100%";
+    imgEl.style.borderRadius = "12px";
+    imgEl.style.marginBottom = "16px";
+    imgEl.style.boxShadow = "0 6px 20px rgba(0,0,0,0.1)";
+    section.appendChild(imgEl);
+  });
+
+  contentEl.appendChild(section);
+});
 </script>
 
 
+
+<section id="bibtex" style="padding: 3rem 0; background: #f4fdff;">
+  <div style="max-width: 900px; margin: 0 auto;">
+
+    <h2 style="font-size: 2rem; margin-bottom: 1rem; color:#0077cc; text-align:center;">
+      BibTeX
+    </h2>
+
+    <pre style="background:#25252e; color:#f8f8f2; padding:1.5rem; border-radius:12px; font-size:1rem; overflow-x:auto; line-height:1.5;">
+@misc{lin2025mmsivideobenchholisticbenchmarkvideobased,
+        title={MMSI-Video-Bench: A Holistic Benchmark for Video-Based Spatial Intelligence}, 
+        author={Jingli Lin and Runsen Xu and Shaohao Zhu and Sihan Yang and Peizhou Cao and Yunlong Ran and Miao Hu and Chenming Zhu and Yiman Xie and Yilin Long and Wenbo Hu and Dahua Lin and Tai Wang and Jiangmiao Pang},
+        year={2025},
+        eprint={2512.10863},
+        archivePrefix={arXiv},
+        primaryClass={cs.CV},
+        url={https://arxiv.org/abs/2512.10863}, 
+  }
+    </pre>
+
+  </div>
+</section>
 <!-- ================= Footer ================= -->
 <footer>
   &copy; 2025 MMSI-Video-Bench | <a href="#">GitHub Repo</a>
