@@ -952,7 +952,7 @@ const analyses = [
   {
     id: "a2",
     title: "Frame Sampling Study",
-    text: "Due to the reasoning-intensive nature of our benchmark, the commonly used frame-sampling strategy AKS does not transfer directly to MMSI-Video-Bench, leading to additional performance degradation. ",
+    text: "Due to the reasoning-intensive nature of MMSI-Video-Bench, commonly used frame-sampling strategies such as AKS do not transfer directly, resulting in additional performance degradation. This highlights the benchmark’s challenging nature and indicates that it imposes stricter requirements on frame-sampling strategies than existing video benchmarks.",
     images: []
   },
   {
@@ -964,7 +964,7 @@ const analyses = [
   {
     id: "a4",
     title: "Preliminary Exploration for Model Improvement",
-    text: "Our preliminary exploration shows that neither 3D spatial cues nor chain-of-thought prompting yields meaningful gains on MMSI-Video-Bench.",
+    text: "Our preliminary exploration indicates that neither 3D spatial cues nor chain-of-thought prompting provide significant gains on MMSI-Video-Bench. Key findings: (1) designing spatial cues that are interpretable to the models remains an open challenge; (2) the issue is not that the model omits steps, but that it struggles with inherently difficult aspects of the task, highlighting limitations in its intrinsic reasoning ability.",
     images: ["static/images/analysis4.png"]
   }
 ];
@@ -1056,15 +1056,6 @@ analyses.forEach(a => {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
 
 
 
