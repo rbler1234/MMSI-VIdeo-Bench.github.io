@@ -193,7 +193,7 @@
     <div class="hero-buttons" style="margin-top:1.5rem; display:flex; gap:1.5rem; justify-content:center;">
 
       <!-- Paper -->
-      <a href="https://openreview.net/group?id=thecvf.com/CVPR/2026/Conference/Authors" class="btn" 
+      <a href="https://arxiv.org/abs/2512.10863" class="btn" 
          style="display:flex; align-items:center; gap:8px; padding:0.6rem 1.2rem;">
         <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png"
              alt="Paper" style="width:22px; height:22px;"/>
@@ -224,33 +224,32 @@
 <!-- ================= Abstract ================= -->
 <section class="abstract">
   <div class="inner-container">
-    
-
-    <div class="features-row" style="display:flex; justify-content:space-around; gap:3rem; margin-top:0rem; flex-wrap:nowrap;">
-
-      <div class="feature-card" style="flex:1 1 0; max-width:250px; background:#f0f0ff; border-radius:12px; padding:1.2rem; box-shadow:0 4px 12px rgba(0, 0, 0, 0);">
-        <h3 style="color:#6b6bf8; margin-bottom:0.5rem;">Diverse Scenarios</h3>
-        <p style="font-size:0.95rem; color:#1f1f2e;">25 public + 1 in-house datasets covering indoor, outdoor, tabletop, and movie scenes.</p>
+    <div class="features-row" style="display:flex; justify-content:space-around; gap:5rem; margin-top:0rem; flex-wrap:nowrap;">
+      
+      <div class="feature-card" style="flex:1 1 0; max-width:500px; background:#f0f0ff; border-radius:12px; padding:1.2rem; box-shadow:0 4px 12px rgba(0, 0, 0, 0);">
+        <h3 style="color:#6b6bf8; margin-bottom:0.5rem; font-size:2.0rem;">Diverse Scenarios</h3>
+        <p style="font-size:1.2rem; color:#1f1f2e;"> <strong>25 public + 1 in-house datasets</strong> covering indoor, outdoor, tabletop, and movie scenes.</p>
       </div>
-
+      
       <div class="feature-card" style="flex:1 1 0; max-width:250px; background:#f0f0ff; border-radius:12px; padding:1.2rem; box-shadow:0 4px 12px rgba(0, 0, 0, 0);">
-        <h3 style="color:#6b6bf8; margin-bottom:0.5rem;">High-Quality</h3>
-        <p style="font-size:0.95rem; color:#1f1f2e;">All videos annotated by multiple experts with strict cross-validation and quality control.</p>
+        <h3 style="color:#6b6bf8; margin-bottom:0.5rem; font-size:2.0rem;">High-Quality</h3>
+        <p style="font-size:1.2rem; color:#1f1f2e;">All <strong>manually annotated</strong> by multiple 3DV experts under strict quality control.</p>
       </div>
-
+      
       <div class="feature-card" style="flex:1 1 0; max-width:250px; background:#f0f0ff; border-radius:12px; padding:1.2rem; box-shadow:0 4px 12px rgba(0, 0, 0, 0);">
-        <h3 style="color:#6b6bf8; margin-bottom:0.5rem;">Comprehensive Tasks</h3>
-        <p style="font-size:0.95rem; color:#1f1f2e;">Supports spatial layout reasoning, motion understanding, planning, prediction, and cross-video reasoning.</p>
+        <h3 style="color:#6b6bf8; margin-bottom:0.5rem; font-size:2.0rem;">Comprehensive Tasks</h3>
+        <p style="font-size:1.2rem; color:#1f1f2e;">Supports spatial layout reasoning, motion understanding, planning, prediction, and cross-video reasoning.</p>
       </div>
-
+      
       <div class="feature-card" style="flex:1 1 0; max-width:250px; background:#f0f0ff; border-radius:12px; padding:1.2rem; box-shadow:0 4px 12px rgba(0, 0, 0, 0);">
-        <h3 style="color:#6b6bf8; margin-bottom:0.5rem;">Challenging Benchmark</h3>
-        <p style="font-size:0.95rem; color:#1f1f2e;">Most models perform poorly, highlighting a ~60% human-AI gap and research opportunities.</p>
+        <h3 style="color:#6b6bf8; margin-bottom:0.5rem; font-size:2.0rem;">Challenging Benchmark</h3>
+        <p style="font-size:1.2rem; color:#1f1f2e;">Most models perform poorly on MMSI-Video-Bench, highlighting a ~<strong>60% human-AI gap</strong>.</p>
       </div>
 
     </div>
   </div>
 </section>
+
 
 
 
@@ -526,7 +525,7 @@ const quizData = [
   image:"static/images/assist2.png",
   options:["4 yellow and 4 white","5 yellow and 5 white","4 yellow and 5 white","5 yellow and 4 white"],
   answer:"4 yellow and 4 white",
-  reason:"Focus on the central white building at the boundary of the black square area, and based on it, determine how many buildings are on its left and right."
+  reason:"Focus on the central white building at the boundary of the black square pool, and based on it, determine how many buildings are on its left and right."
 },
 {
   type:"Motion Understanding Categories",
@@ -554,7 +553,7 @@ const quizData = [
   type:"Prediction Categories",
   video:"static/videos/prediction.mp4",
   poster:"thumb1.jpg",
-  question:"This video captures my driving record up to now. Assuming that the woman shown in the figure walks at a constant average speed and maintains a consistent direction, where is she approximately located at this moment?",
+  question:"This video captures my driving record up to now. Assuming the woman carrying a bag walks at a constant average speed and maintains a steady direction, where is she likely located at this moment?",
   image:"static/images/assist1.png",
   options:["Pink point","Yellow point","Green point","Red point"],
   answer:"Green point",
